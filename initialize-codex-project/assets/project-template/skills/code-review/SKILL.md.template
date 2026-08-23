@@ -1,0 +1,12 @@
+---
+name: code-review
+description: Review {{PROJECT_NAME}} changes for correctness, regressions, project-boundary violations, compatibility, security/privacy, architecture, and missing tests. Use for review requests or final diff review; review-only requests do not authorize fixes.
+---
+
+# Code Review
+
+Establish the requested baseline. Read `AGENTS.md` and only the relevant authority documents. Inspect starting status before the diff so existing work is not misattributed.
+
+Trace changed behavior through its callers and consumers. Prioritize user-visible failures, crashes/data loss, contract and compatibility breaks, security/privacy issues, concurrency/resource bugs, architecture violations, and missing regression tests. Ignore cosmetic style unless an enforced rule or correctness concern depends on it.
+
+Report actionable findings first, ordered by severity, with precise location, trigger, impact, and safe direction. Do not edit unless asked. If there are no findings, state coverage, tests observed/not run, and residual risks.

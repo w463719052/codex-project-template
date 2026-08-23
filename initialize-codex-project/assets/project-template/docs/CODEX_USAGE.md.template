@@ -1,0 +1,46 @@
+# Using Codex in {{PROJECT_NAME}}
+
+## What loads automatically
+
+- Root `AGENTS.md` is the project instruction entrypoint.
+- Repository skills under `.agents/skills` are discoverable by name and description.
+- A full `SKILL.md` loads when explicitly invoked or when its description matches the task.
+- Other docs are read on demand through `AGENTS.md`; they are not all loaded for every task.
+
+## Daily workflow
+
+```text
+Define the task with docs/TASK_TEMPLATE.md
+                ↓
+Use a matching project skill or execute the scoped task
+                ↓
+$build-and-test
+                ↓
+$code-review
+```
+
+### Feature
+
+```text
+Use docs/TASK_TEMPLATE.md to define this feature.
+Inspect the current repository and propose a plan with files, interfaces, non-goals,
+acceptance criteria, and verification. Do not edit until the plan is approved.
+```
+
+### Verification
+
+```text
+Use $build-and-test. Verify the current diff and report every command as
+pass, fail, or not run, including remaining risk.
+```
+
+### Review
+
+```text
+Use $code-review. Review the current diff and report findings first.
+Do not modify files.
+```
+
+## Project-specific commands
+
+See `docs/VERIFICATION.md`. Model choice is manual; project docs and skills do not switch the active model.

@@ -1,0 +1,3 @@
+interface:
+  display_name: "Initialize Codex Project"
+  short_description: "Create a verified Codex-first repository workflow"

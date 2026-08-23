@@ -1,0 +1,30 @@
+# {{PROJECT_NAME}} Agent Instructions
+
+This file is the concise navigation and mandatory-rules entrypoint. Read only the documents and source files relevant to the current task.
+
+## Authority
+
+{{AUTHORITY_DOCUMENTS}}
+
+When documents conflict, follow the more specific and more recently updated rule unless a higher-level product, security, or compatibility boundary forbids it. Report unresolved conflicts before implementation.
+
+## Repository map
+
+{{REPOSITORY_MAP}}
+
+## Mandatory rules
+
+- Confirm the goal, constraints, non-goals, affected modules, acceptance criteria, and verification before implementation.
+- Preserve existing uncommitted work. Do not reset, clean, overwrite, commit, or reformat unrelated files.
+- Keep the verified architecture and dependency direction: {{ARCHITECTURE_SUMMARY}}
+- Use only confirmed project commands. Do not install dependencies or change configuration without task authorization.
+- Add or update tests in proportion to changed behavior.
+- Completion requires applicable verification from `docs/VERIFICATION.md`.
+- Finish with `git diff --check`, relevant diff/status review, and a report of unverified items and residual risk.
+
+## Workflow entrypoints
+
+- New feature or fix: define the task with `docs/TASK_TEMPLATE.md`, then follow `docs/CODEX_WORKFLOW.md`.
+- Build and test: use `$build-and-test` or follow `docs/VERIFICATION.md`.
+- Review: use `$code-review`; a review-only request does not authorize fixes.
+- Skill maintenance: follow `docs/SKILLS_SPEC.md`.

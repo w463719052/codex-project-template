@@ -1,0 +1,46 @@
+# Verification
+
+Completion means all applicable checks pass. Build does not replace tests, and “not run” does not mean “pass.”
+
+## Verified project commands
+
+### Build
+
+```text
+{{BUILD_COMMANDS}}
+```
+
+### Test
+
+```text
+{{TEST_COMMANDS}}
+```
+
+### Format, lint, and static analysis
+
+```text
+{{STATIC_CHECK_COMMANDS}}
+```
+
+Commands above must come from repository scripts/configuration/CI or a successful project discovery command. Remove empty sections instead of inventing commands.
+
+## Validation matrix
+
+{{VALIDATION_MATRIX}}
+
+Start with the smallest relevant check, then run the affected target/suite and required build. Use temporary output/cache directories when supported; do not pollute the repository.
+
+## Diff checks
+
+```bash
+git diff --check
+git diff --stat
+git diff
+git status --short
+```
+
+Compare against the starting status. Check for secrets, personal data, generated output, editor state, binaries, fixtures, lockfiles, and unrelated formatting according to project policy.
+
+## Result record
+
+Report each command, scope, pass/fail/not-run, decisive error, manual checks, and residual risk. Required failures mean the task is incomplete or blocked.

@@ -1,0 +1,68 @@
+# Codex Task Template
+
+## Goal
+
+<!-- Describe one observable result. -->
+
+## Context
+
+- Motivation/problem:
+- Authority documents:
+- Existing entrypoints:
+- Reproduction/evidence:
+
+## Constraints
+
+- Platforms/runtime:
+- Architecture/dependency direction:
+- Compatibility/security/privacy:
+- Allowed dependencies:
+- Allowed files/directories:
+
+## Boundaries
+
+- Required error, cancellation, missing-data, concurrency, and edge behavior:
+- Performance/resource limits:
+- API/schema compatibility:
+
+## Affected modules
+
+- [ ] Production code
+- [ ] Models/contracts
+- [ ] UI/API
+- [ ] Build/configuration
+- [ ] Tests/fixtures
+- [ ] Documentation
+
+## Non-goals
+
+<!-- State what must not be changed or implemented. -->
+
+## Execution
+
+- [ ] Plan before implementation.
+- [ ] Direct execution is acceptable unless new risk is found.
+- Suggested project skill:
+- Suggested model/reasoning:
+
+## Acceptance criteria
+
+- [ ] Behavior:
+- [ ] Errors/edge cases:
+- [ ] Compatibility:
+- [ ] Tests:
+- [ ] No unrelated changes:
+
+## Verification commands
+
+```text
+{{VERIFICATION_COMMANDS}}
+```
+
+## Before completion
+
+- [ ] Applicable tests/checks passed.
+- [ ] Build passed when required.
+- [ ] `git diff --check` passed.
+- [ ] Diff and status contain only intended changes.
+- [ ] Final report includes unverified items and risk.

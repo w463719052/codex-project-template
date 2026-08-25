@@ -1,0 +1,21 @@
+---
+name: context-discovery
+description: Build a bounded, read-only context plan for {{PROJECT_NAME}} from approved module and routing metadata. Use before planning large, unfamiliar, cross-module, or public-contract work; do not use when the exact files and consumers are already known and bounded.
+---
+
+# Context Discovery
+
+Read `.agents/ai/project-map.json` and `docs/AI_CONTEXT_STRATEGY.md`. Start from
+the task type, explicit module/file hints, and changed files. Run the bundled
+`scripts/build_context_pack.py` to select paths, reasons, and byte counts within
+the approved context budget.
+
+The tool is read-only and does not emit source content. Inspect selected files
+progressively; do not load omitted files merely because they are nearby. Expand
+only when a configured trigger or inspected evidence requires another bounded
+round. `CONTEXT-01` never overrides `GATE-01`, `GATE-02`, compatibility,
+security/privacy, or verification requirements.
+
+Report selected modules/routes, files and reasons, budget usage, omissions,
+missing paths, documentation gaps, and any requested expansion. Do not modify
+files or external state during context discovery.

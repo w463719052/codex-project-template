@@ -1,12 +1,18 @@
 # {{PROJECT_NAME}} Agent Instructions
 
-This file is the concise navigation and mandatory-rules entrypoint. Read only the documents and source files relevant to the current task.
+This file is the concise navigation and mandatory-rules entrypoint. Read only
+the documents and source files relevant to the current task.
 
 ## Authority
 
 {{AUTHORITY_DOCUMENTS}}
 
-When documents conflict, follow the more specific and more recently updated rule unless a higher-level product, security, or compatibility boundary forbids it. Report unresolved conflicts before implementation.
+Within repository guidance, use this fixed order: the explicitly approved task
+contract; the closest applicable nested `AGENTS.override.md` or `AGENTS.md`;
+this root file; then the authority documents in their listed order. Higher-level
+system, security, privacy, legal, and compatibility constraints always remain in
+force. Stop before implementation when a conflict remains unresolved; never
+choose a rule from an inferred timestamp.
 
 ## Repository map
 
@@ -14,17 +20,45 @@ When documents conflict, follow the more specific and more recently updated rule
 
 ## Mandatory rules
 
-- Confirm the goal, constraints, non-goals, affected modules, acceptance criteria, and verification before implementation.
-- Preserve existing uncommitted work. Do not reset, clean, overwrite, commit, or reformat unrelated files.
-- Keep the verified architecture and dependency direction: {{ARCHITECTURE_SUMMARY}}
-- Use only confirmed project commands. Do not install dependencies or change configuration without task authorization.
+- `GATE-01`: investigate read-only; report goal, constraints, non-goals,
+  modules/consumers, exact files, acceptance, risks, and verification; do not
+  write before explicit approval of that plan.
+- `GATE-02`: treat the approved plan as a scope contract. Stop for renewed
+  approval before an unlisted file/module, dependency, build/CI/config change,
+  public contract/schema, destructive operation, or external action.
+- `WORKTREE-01`: preserve existing work; do not reset, clean, overwrite,
+  commit, rewrite history, or reformat unrelated files.
+- `EVIDENCE-01`: use only verified project facts and commands. Record unknowns
+  as documentation gaps; do not invent policy or install discovery tools.
+- `CONTEXT-01`: use `.agents/ai/project-map.json` and
+  `docs/AI_CONTEXT_STRATEGY.md`; start bounded and expand only for a named
+  evidence trigger.
+- `MODULE-01`: preserve documented module responsibilities, dependency
+  direction, contracts, and shared-library gates.
+- `VERIFY-01`: select evidenced scope-relevant checks through
+  `docs/VERIFICATION.md`; command selection never authorizes execution, and
+  not-run never means pass.
+- For every new or materially changed source file, detect its language and apply
+  the selected industry profile in `docs/CODING_STANDARDS.md`. Treat verified
+  build, compatibility, security, privacy, and public-contract requirements as
+  hard constraints; record rather than hide conflicts with existing conventions.
+- Keep the verified architecture and dependency direction:
+
+  {{ARCHITECTURE_SUMMARY}}
 - Add or update tests in proportion to changed behavior.
-- Completion requires applicable verification from `docs/VERIFICATION.md`.
+- Trace changed behavior through callers, consumers, contracts, data, config,
+  deployment, and documentation using `docs/CHANGE_IMPACT.md`.
 - Finish with `git diff --check`, relevant diff/status review, and a report of unverified items and residual risk.
 
 ## Workflow entrypoints
 
-- New feature or fix: define the task with `docs/TASK_TEMPLATE.md`, then follow `docs/CODEX_WORKFLOW.md`.
+- New feature or fix: define and approve the task with `docs/TASK_TEMPLATE.md`, then follow `docs/CODEX_WORKFLOW.md`.
+- Large or unfamiliar task: use `$context-discovery` before proposing scope.
 - Build and test: use `$build-and-test` or follow `docs/VERIFICATION.md`.
 - Review: use `$code-review`; a review-only request does not authorize fixes.
+- Architecture and modules: follow `docs/ARCHITECTURE.md` and `docs/MODULE_MAP.md`.
+- Coding rules: follow `docs/CODING_STANDARDS.md`, its selected language
+  profiles, enforcement sources, and `docs/CODING_RULES_LOG.md`.
+- Cross-boundary decisions: use `docs/ADR_TEMPLATE.md`.
+- Shared library work: follow `docs/SHARED_LIBRARY_STANDARD.md`.
 - Skill maintenance: follow `docs/SKILLS_SPEC.md`.

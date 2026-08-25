@@ -1,0 +1,49 @@
+# {{PROJECT_NAME}} Architecture
+
+This document records verified architecture. It is authoritative only for
+statements supported by the listed repository evidence or explicitly approved
+decisions. Unknowns remain documentation gaps; they are not invitations for an
+agent to invent a design.
+
+## System boundary
+
+{{SYSTEM_BOUNDARY}}
+
+## Drivers and constraints
+
+{{ARCHITECTURE_DRIVERS}}
+
+## Architecture overview
+
+{{ARCHITECTURE_OVERVIEW}}
+
+## Dependency direction
+
+{{DEPENDENCY_DIRECTION}}
+
+Dependencies must point toward stable abstractions according to the verified
+project model. A new reverse, cyclic, cross-layer, or cross-domain dependency
+requires impact analysis and explicit approval.
+
+## Data and control flow
+
+{{DATA_AND_CONTROL_FLOW}}
+
+## Cross-cutting concerns
+
+{{CROSS_CUTTING_CONCERNS}}
+
+Include only evidenced rules for error handling, concurrency, cancellation,
+observability, security/privacy, persistence, configuration, and resource
+ownership.
+
+## Architecture decision rule
+
+Use `docs/ADR_TEMPLATE.md` before changing a system boundary, dependency
+direction, public contract, persistent schema, shared infrastructure, or
+cross-cutting policy. An ADR proposal does not authorize its implementation;
+the implementation plan still requires approval.
+
+## Documentation gaps
+
+{{ARCHITECTURE_GAPS}}

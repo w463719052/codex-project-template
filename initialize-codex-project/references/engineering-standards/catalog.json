@@ -1,0 +1,252 @@
+{
+  "last_verified": "2026-08-26",
+  "profiles": [
+    {
+      "authority_sources": [
+        {
+          "title": "Swift API Design Guidelines",
+          "url": "https://www.swift.org/documentation/api-design-guidelines/"
+        }
+      ],
+      "conditional_extensions": [],
+      "id": "swift",
+      "marker_names": ["Package.swift"],
+      "reference": "swift.md",
+      "select_on_markers": true,
+      "strong_extensions": [".swift"],
+      "title": "Swift"
+    },
+    {
+      "authority_sources": [
+        {
+          "title": "Apple Coding Guidelines for Cocoa",
+          "url": "https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/CodingGuidelines/"
+        }
+      ],
+      "conditional_extensions": [".m", ".h"],
+      "id": "objective-c",
+      "marker_names": ["Podfile", "project.pbxproj"],
+      "reference": "objective-c.md",
+      "select_on_markers": false,
+      "strong_extensions": [".mm"],
+      "title": "Objective-C"
+    },
+    {
+      "authority_sources": [
+        {
+          "title": "Kotlin Coding Conventions",
+          "url": "https://kotlinlang.org/docs/coding-conventions.html"
+        },
+        {
+          "title": "Android Architecture Recommendations",
+          "url": "https://developer.android.com/topic/architecture/recommendations"
+        }
+      ],
+      "conditional_extensions": [],
+      "id": "kotlin",
+      "marker_names": ["build.gradle.kts", "settings.gradle.kts"],
+      "reference": "kotlin.md",
+      "select_on_markers": true,
+      "strong_extensions": [".kt", ".kts"],
+      "title": "Kotlin"
+    },
+    {
+      "authority_sources": [
+        {
+          "title": "Google Java Style Guide",
+          "url": "https://google.github.io/styleguide/javaguide.html"
+        }
+      ],
+      "conditional_extensions": [],
+      "id": "java",
+      "marker_names": [],
+      "reference": "java.md",
+      "select_on_markers": false,
+      "strong_extensions": [".java"],
+      "title": "Java"
+    },
+    {
+      "authority_sources": [
+        {
+          "title": "Google TypeScript Style Guide",
+          "url": "https://google.github.io/styleguide/tsguide.html"
+        },
+        {
+          "title": "Google JavaScript Style Guide",
+          "url": "https://google.github.io/styleguide/jsguide.html"
+        }
+      ],
+      "conditional_extensions": [],
+      "id": "typescript-javascript",
+      "marker_names": ["package.json", "tsconfig.json", "jsconfig.json"],
+      "reference": "typescript-javascript.md",
+      "select_on_markers": true,
+      "strong_extensions": [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"],
+      "title": "TypeScript and JavaScript"
+    },
+    {
+      "authority_sources": [
+        {
+          "title": "HTML Living Standard for Web Developers",
+          "url": "https://html.spec.whatwg.org/dev/"
+        },
+        {
+          "title": "CSS Snapshot 2025",
+          "url": "https://www.w3.org/TR/css-2025/"
+        },
+        {
+          "title": "Web Content Accessibility Guidelines 2.2",
+          "url": "https://www.w3.org/TR/WCAG22/"
+        },
+        {
+          "title": "OWASP Top Ten",
+          "url": "https://owasp.org/www-project-top-ten/"
+        },
+        {
+          "title": "Google HTML/CSS Style Guide",
+          "url": "https://google.github.io/styleguide/htmlcssguide.html"
+        }
+      ],
+      "conditional_extensions": [".jsx", ".tsx"],
+      "id": "web-frontend",
+      "marker_names": [
+        "angular.json",
+        "astro.config.js",
+        "astro.config.mjs",
+        "astro.config.ts",
+        "gatsby-config.js",
+        "gatsby-config.ts",
+        "next.config.js",
+        "next.config.mjs",
+        "next.config.ts",
+        "nuxt.config.js",
+        "nuxt.config.ts",
+        "postcss.config.js",
+        "postcss.config.mjs",
+        "postcss.config.ts",
+        "svelte.config.js",
+        "svelte.config.ts",
+        "tailwind.config.js",
+        "tailwind.config.ts",
+        "vite.config.js",
+        "vite.config.mjs",
+        "vite.config.mts",
+        "vite.config.ts",
+        "vue.config.js",
+        "vue.config.ts",
+        "webpack.config.js",
+        "webpack.config.ts"
+      ],
+      "reference": "web-frontend.md",
+      "select_on_markers": true,
+      "strong_extensions": [
+        ".astro",
+        ".css",
+        ".htm",
+        ".html",
+        ".less",
+        ".sass",
+        ".scss",
+        ".svelte",
+        ".vue"
+      ],
+      "title": "Web Frontend"
+    },
+    {
+      "authority_sources": [
+        {
+          "title": "PEP 8",
+          "url": "https://peps.python.org/pep-0008/"
+        },
+        {
+          "title": "Google Python Style Guide",
+          "url": "https://google.github.io/styleguide/pyguide.html"
+        }
+      ],
+      "conditional_extensions": [],
+      "id": "python",
+      "marker_names": ["pyproject.toml", "setup.py", "tox.ini"],
+      "reference": "python.md",
+      "select_on_markers": true,
+      "strong_extensions": [".py", ".pyi"],
+      "title": "Python"
+    },
+    {
+      "authority_sources": [
+        {
+          "title": "Effective Go",
+          "url": "https://go.dev/doc/effective_go"
+        },
+        {
+          "title": "Go Code Review Comments",
+          "url": "https://go.dev/wiki/CodeReviewComments"
+        }
+      ],
+      "conditional_extensions": [],
+      "id": "go",
+      "marker_names": ["go.mod", "go.work"],
+      "reference": "go.md",
+      "select_on_markers": true,
+      "strong_extensions": [".go"],
+      "title": "Go"
+    },
+    {
+      "authority_sources": [
+        {
+          "title": "Rust Style Guide",
+          "url": "https://doc.rust-lang.org/style-guide/"
+        },
+        {
+          "title": "Rust API Guidelines",
+          "url": "https://rust-lang.github.io/api-guidelines/"
+        }
+      ],
+      "conditional_extensions": [],
+      "id": "rust",
+      "marker_names": ["Cargo.toml"],
+      "reference": "rust.md",
+      "select_on_markers": true,
+      "strong_extensions": [".rs"],
+      "title": "Rust"
+    },
+    {
+      "authority_sources": [
+        {
+          "title": "ISO/IEC 9899:2024 Programming languages — C",
+          "url": "https://www.iso.org/standard/82075.html"
+        },
+        {
+          "title": "SEI CERT C Coding Standard",
+          "url": "https://wiki.sei.cmu.edu/confluence/display/c"
+        }
+      ],
+      "conditional_extensions": [".h"],
+      "id": "c",
+      "marker_names": [],
+      "reference": "c.md",
+      "select_on_markers": false,
+      "strong_extensions": [".c"],
+      "title": "C"
+    },
+    {
+      "authority_sources": [
+        {
+          "title": "C++ Core Guidelines",
+          "url": "https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines"
+        },
+        {
+          "title": "Google C++ Style Guide",
+          "url": "https://google.github.io/styleguide/cppguide.html"
+        }
+      ],
+      "conditional_extensions": [".h"],
+      "id": "cpp",
+      "marker_names": [],
+      "reference": "cpp.md",
+      "select_on_markers": false,
+      "strong_extensions": [".cc", ".cpp", ".cxx", ".hh", ".hpp", ".hxx"],
+      "title": "C++"
+    }
+  ],
+  "schema_version": 1
+}

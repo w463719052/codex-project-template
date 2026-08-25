@@ -3,6 +3,7 @@
 ## What loads automatically
 
 - Root `AGENTS.md` is the project instruction entrypoint.
+- `.agents/ai/project-map.json` routes bounded context for discovery tasks.
 - Repository skills under `.agents/skills` are discoverable by name and description.
 - A full `SKILL.md` loads when explicitly invoked or when its description matches the task.
 - Other docs are read on demand through `AGENTS.md`; they are not all loaded for every task.
@@ -11,6 +12,8 @@
 
 ```text
 Define the task with docs/TASK_TEMPLATE.md
+                ↓
+Review and explicitly approve the plan and file set
                 ↓
 Use a matching project skill or execute the scoped task
                 ↓
@@ -22,9 +25,11 @@ $code-review
 ### Feature
 
 ```text
-Use docs/TASK_TEMPLATE.md to define this feature.
-Inspect the current repository and propose a plan with files, interfaces, non-goals,
-acceptance criteria, and verification. Do not edit until the plan is approved.
+Define this feature with docs/TASK_TEMPLATE.md and apply GATE-01. Use
+$context-discovery when affected files or consumers are not already known.
+For every changed source file, use the detected language profile in
+docs/CODING_STANDARDS.md. Stop under GATE-02 if implementation exceeds the
+approved scope.
 ```
 
 ### Verification
@@ -41,6 +46,24 @@ Use $code-review. Review the current diff and report findings first.
 Do not modify files.
 ```
 
+### Repeated corrections
+
+```text
+If the same manual edit or review correction appears in at least three places
+or recurs across tasks, record evidence in docs/CODING_RULES_LOG.md. Propose an
+approved standards or automation replacement; do not silently change tool
+configuration or migrate unrelated historical code.
+```
+
 ## Project-specific commands
 
-See `docs/VERIFICATION.md`. Model choice is manual; project docs and skills do not switch the active model.
+See `docs/VERIFICATION.md`. Model choice is manual; project docs and skills do
+not switch the active model. File/byte budgets are deterministic proxies, not
+claims about actual token usage.
+
+## What the documents cannot enforce alone
+
+`AGENTS.md` and skills provide durable instructions, but mechanical rules should
+also be enforced by the project's confirmed formatters, linters, type checks,
+tests, CI, hooks, review approvals, and sandbox/command policy where available.
+Adding or changing those controls requires separate task approval.

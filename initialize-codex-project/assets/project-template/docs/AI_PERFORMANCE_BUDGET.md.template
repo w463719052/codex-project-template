@@ -1,0 +1,45 @@
+# {{PROJECT_NAME}} AI Performance Budget
+
+Performance optimizations must preserve the quality guardrails below. File and
+byte counts are local proxy metrics; they are not claims about actual model
+tokens, credits, or latency.
+
+## Approved context budgets
+
+{{CONTEXT_BUDGETS}}
+
+## Baseline measurements
+
+{{PERFORMANCE_BASELINE}}
+
+Record representative small, module-local, cross-module, and public-contract
+tasks. Measure at least selected files/bytes, tool calls, elapsed time, checks,
+rework, and observed token usage when the active Codex surface exposes it.
+
+## Quality guardrails
+
+{{QUALITY_GUARDRAILS}}
+
+Token or time reductions are regressions when they reduce boundary compliance,
+consumer/contract coverage, verification coverage, first-pass success, or
+review defect detection.
+
+## Task and reasoning classes
+
+- L1: local, public-contract-preserving change with known verification.
+- L2: module-local behavior or debugging with bounded consumers.
+- L3: cross-module, compatibility, concurrency, or data-flow change.
+- L4: architecture, security/privacy, migration, or high-cost failure mode.
+
+The operator selects the model and reasoning level. Repository guidance records
+task complexity and evidence; it does not pin a changing product/model name.
+
+## Parallelism budget
+
+Parallel work requires explicit approval, stable interfaces, non-overlapping
+write scopes, and one integrating owner. Report wall-clock savings separately
+from total agent/token consumption.
+
+## Documentation gaps
+
+{{PERFORMANCE_GAPS}}

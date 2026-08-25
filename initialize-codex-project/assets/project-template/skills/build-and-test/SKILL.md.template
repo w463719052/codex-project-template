@@ -5,10 +5,24 @@ description: Run the verified build, test, format, lint, static-analysis, and di
 
 # Build and Test
 
-Read `docs/VERIFICATION.md` and starting `git status --short`. Determine the affected modules and run the smallest relevant check, then required target/suite checks and builds.
+Read the approved task contract, `docs/CHANGE_IMPACT.md`,
+`docs/VERIFICATION.md`, and starting `git status --short`. Confirm the changed
+files and modules remain inside the approved scope. First run
+`scripts/select_checks.py` for each changed path to produce a deterministic
+candidate list. Review its evidence and task authorization before executing
+anything; selection itself never authorizes or runs commands (`VERIFY-01`). Run
+the smallest authorized relevant check, then required target/suite,
+consumer/contract, and build checks.
 
-Use only verified repository commands. Do not install tools, change signing/dependencies/configuration, clean user files, or edit production code merely to make verification pass unless the user explicitly expands the task.
+Use only verified repository commands and record their evidence. Prefer
+non-mutating check or dry-run modes. Do not install tools, run an unapproved
+mutating formatter, change signing/dependencies/configuration, clean user files,
+or edit production code merely to make verification pass unless the user
+explicitly expands the task.
 
-Separate implementation failures from environment failures. Build does not replace tests. Finish with `git diff --check` and relevant diff/status review.
+Separate implementation failures from environment failures. Build does not
+replace tests. For cross-module or public-contract changes, require applicable
+consumer, compatibility, and integration evidence. Finish with
+`git diff --check` and relevant diff/status comparison.
 
 Report command, scope, pass/fail/not-run, decisive error, manual checks, and residual risk. State completion only when every required check passes.

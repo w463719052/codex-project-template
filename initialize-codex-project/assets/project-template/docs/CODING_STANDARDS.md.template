@@ -1,0 +1,104 @@
+# {{PROJECT_NAME}} Coding Standards
+
+This document governs newly written and materially changed code. Apply the
+selected industry language baseline first while treating verified formatter,
+compiler, CI, public-contract, compatibility, security, privacy, and platform
+requirements as hard constraints. Existing project conventions are required
+compatibility evidence, not an automatic reason to preserve weaker legacy style.
+
+## Authority and conflict order
+
+1. Safety, privacy, legal, public-contract, compatibility, compiler, build, and
+   CI constraints that the project must satisfy.
+2. The selected industry baseline for the language of each changed file.
+3. Existing project rules and local conventions that do not conflict with the
+   first two levels.
+4. Explicitly approved team or personal preferences for otherwise undecided cases.
+
+For a style-only conflict, prefer the industry baseline inside the approved
+change. For a mechanically enforced conflict, keep the build green, record the
+difference below, and propose configuration migration separately. Never hide a
+conflict or expand a focused task into repository-wide reformatting.
+
+## Selected language profiles
+
+{{LANGUAGE_PROFILE_SELECTION}}
+
+Profiles are selected from verified file extensions, build markers, modules,
+and frameworks. Apply them per file/module in a polyglot repository. If a task
+touches a language with no selected profile, stop and request an approved
+standards update instead of guessing.
+
+## Enforcement sources
+
+{{ENFORCEMENT_SOURCES}}
+
+List the exact formatter, linter, compiler/type checker, test, generated-code,
+and CI configuration paths. When prose conflicts with a mechanically enforced
+rule, stop and resolve the source of truth rather than working around it.
+
+## Existing-rule compatibility and conflicts
+
+{{CODING_STANDARD_CONFLICTS}}
+
+## Language and framework rules
+
+{{LANGUAGE_AND_FRAMEWORK_RULES}}
+
+## Naming and public API rules
+
+{{NAMING_AND_API_RULES}}
+
+## Errors, concurrency, cancellation, and resources
+
+{{ERROR_CONCURRENCY_RESOURCE_RULES}}
+
+## Test and documentation rules
+
+{{TEST_AND_DOCUMENTATION_RULES}}
+
+## Universal engineering rules
+
+- Keep each change focused on one approved outcome.
+- Keep implementation details private and public surfaces minimal.
+- Prefer cohesive domain/module ownership over generic convenience folders.
+- Keep the successful path easy to scan. Prefer early returns or guard clauses
+  over deeply nested conditionals when supported by the selected language.
+- Treat three nesting levels, roughly forty logical lines in a function,
+  excessive branching, or multiple reasons to change as review triggers rather
+  than automatic failures. Extract only when naming, ownership, reuse, or
+  testability becomes clearer.
+- Treat a few hundred lines, multiple unrelated primary types, or multiple
+  reasons to change as file-split review triggers. Do not fragment cohesive code
+  or generated output merely to meet a number.
+- Avoid speculative abstractions. Reuse inside the owning module first; apply
+  `docs/SHARED_LIBRARY_STANDARD.md` before extracting shared code.
+- Apply a design pattern only to a demonstrated variation, lifecycle, ownership,
+  boundary, or testability problem. The pattern name is never sufficient evidence.
+- Make state ownership, side effects, dependency construction, cancellation,
+  concurrency, and resource cleanup explicit.
+- Preserve observable behavior and compatibility unless an approved task
+  explicitly changes them.
+- Do not suppress a warning, error, test, or type check without documenting the
+  cause, impact, and approved safe path.
+- Do not hand-edit generated output; change its verified source and regenerate
+  using the confirmed project command.
+
+## Repeated manual corrections
+
+Use `docs/CODING_RULES_LOG.md`. When substantially the same manual edit or review
+correction appears in at least three places or recurs across tasks:
+
+1. record the evidence, language/module scope, rationale, correct replacement,
+   exceptions, and possible enforcement;
+2. propose replacing the repeated work with an approved standard, formatter,
+   linter, static check, template, code generator, or test;
+3. replace an obsolete or conflicting rule rather than retaining two active
+   rules that disagree; and
+4. request separate approval for tool configuration or historical-code migration.
+
+Detection and recording do not authorize unrelated edits or configuration changes.
+
+## Documentation gaps
+
+{{CODING_STANDARD_GAPS}}

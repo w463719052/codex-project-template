@@ -1,5 +1,15 @@
 # Codex Task Template
 
+## Approval state
+
+- Status: proposed / approved / reapproval-required / verified
+- Approved by:
+- Approval reference or message:
+- Approved files/directories:
+- Approved operations:
+
+Implementation must not begin while status is `proposed` (`GATE-01`).
+
 ## Goal
 
 <!-- Describe one observable result. -->
@@ -10,6 +20,12 @@
 - Authority documents:
 - Existing entrypoints:
 - Reproduction/evidence:
+- Task class (L1/L2/L3/L4):
+- Context route/module hints:
+- Initial file/byte budget and expansion rounds:
+- Detected source languages and selected industry profiles:
+- Existing coding rules and mechanical enforcement:
+- Known profile/project conflicts:
 
 ## Constraints
 
@@ -18,6 +34,8 @@
 - Compatibility/security/privacy:
 - Allowed dependencies:
 - Allowed files/directories:
+- Forbidden files/directories:
+- Forbidden operations/external actions:
 
 ## Boundaries
 
@@ -34,16 +52,22 @@
 - [ ] Tests/fixtures
 - [ ] Documentation
 
+For every checked area, identify direct callers, downstream consumers, public
+contracts, data/configuration, tests, and deployment or operational impact in
+`docs/CHANGE_IMPACT.md`.
+
 ## Non-goals
 
 <!-- State what must not be changed or implemented. -->
 
 ## Execution
 
-- [ ] Plan before implementation.
-- [ ] Direct execution is acceptable unless new risk is found.
+- [ ] Read-only investigation completed.
+- [ ] Exact plan and file list presented.
+- [ ] Explicit approval recorded above.
+- [ ] Scope-change triggers reviewed.
 - Suggested project skill:
-- Suggested model/reasoning:
+- Operator-selected model/reasoning, if relevant:
 
 ## Acceptance criteria
 
@@ -53,11 +77,27 @@
 - [ ] Tests:
 - [ ] No unrelated changes:
 
+## Scope-change triggers (`GATE-02`)
+
+Stop and request renewed approval before:
+
+- touching an unlisted file or module;
+- changing a public API, schema, persistent data, or compatibility behavior;
+- adding/updating a dependency or lockfile;
+- changing build, CI, deployment, signing, secrets, or environment configuration;
+- creating a new cross-module dependency or shared library;
+- performing a destructive operation or external write;
+- expanding the task to unrelated cleanup or refactoring.
+
 ## Verification commands
 
 ```text
 {{VERIFICATION_COMMANDS}}
 ```
+
+- Verification route IDs:
+- Selected command IDs and evidence:
+- Execution authorization recorded by:
 
 ## Before completion
 
@@ -65,4 +105,6 @@
 - [ ] Build passed when required.
 - [ ] `git diff --check` passed.
 - [ ] Diff and status contain only intended changes.
+- [ ] Approved file/module scope was not exceeded.
+- [ ] Callers, consumers, contracts, and regression risks were reviewed.
 - [ ] Final report includes unverified items and risk.

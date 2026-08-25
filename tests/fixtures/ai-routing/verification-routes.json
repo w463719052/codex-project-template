@@ -1,0 +1,39 @@
+{
+  "commands": [
+    {
+      "command": "python3 -B -m unittest tests.test_core",
+      "evidence": "fixture",
+      "id": "core-tests",
+      "kind": "test",
+      "mutates": false
+    },
+    {
+      "command": "git diff --check",
+      "evidence": "fixture",
+      "id": "diff-check",
+      "kind": "diff",
+      "mutates": false
+    }
+  ],
+  "documentation_gaps": [],
+  "fallback_check_ids": ["diff-check"],
+  "routes": [
+    {
+      "consumer_check_ids": [],
+      "escalate_when": ["The public normalization contract changes."],
+      "focused_check_ids": ["core-tests"],
+      "id": "core",
+      "path_patterns": ["src/**", "tests/test_core.py"],
+      "required_build_ids": ["diff-check"]
+    },
+    {
+      "consumer_check_ids": [],
+      "escalate_when": [],
+      "focused_check_ids": ["diff-check"],
+      "id": "documentation",
+      "path_patterns": ["docs/**"],
+      "required_build_ids": []
+    }
+  ],
+  "schema_version": 1
+}

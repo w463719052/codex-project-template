@@ -1,0 +1,34 @@
+{
+  "budgets": {
+    "max_expansion_rounds": 2,
+    "max_initial_bytes": 4096,
+    "max_initial_files": 3
+  },
+  "context_routes": [
+    {
+      "expand_when": ["A consumer outside core is discovered."],
+      "id": "core-change",
+      "initial_paths": ["src/core.py", "docs/architecture.md"],
+      "module_ids": ["core"],
+      "task_types": ["feature", "fix"]
+    }
+  ],
+  "documentation_gaps": [],
+  "excluded_paths": [".git/**", "**/__pycache__/**"],
+  "modules": [
+    {
+      "authority_docs": ["docs/architecture.md"],
+      "consumers": [],
+      "dependencies": [],
+      "entrypoints": ["src/core.py"],
+      "generated_paths": [],
+      "id": "core",
+      "paths": ["src/**", "tests/test_core.py"],
+      "public_contracts": [],
+      "responsibility": "Normalize fixture names.",
+      "tests": ["tests/test_core.py"]
+    }
+  ],
+  "project_name": "Routing Fixture",
+  "schema_version": 1
+}

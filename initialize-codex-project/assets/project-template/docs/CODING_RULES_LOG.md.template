@@ -1,0 +1,48 @@
+# {{PROJECT_NAME}} Coding Rules Log
+
+This log turns repeated manual corrections into durable, reviewable engineering
+rules. It is evidence, not automatic write authorization.
+
+## Promotion threshold
+
+Create a candidate when substantially the same manual edit or review correction:
+
+- appears in at least three locations in the inspected scope; or
+- recurs across separate approved tasks, reviews, or regressions.
+
+Do not infer recurrence without observable diffs, review records, tests, or an
+owner-provided example.
+
+## Candidate record
+
+For each candidate, record:
+
+| Field | Required content |
+| --- | --- |
+| ID | Stable `RULE-CANDIDATE-NNN` identifier |
+| Status | observed / proposed / approved / enforced / rejected / superseded |
+| Evidence | Exact files, reviews, tasks, or test failures showing recurrence |
+| Scope | Applicable languages, modules, generated/manual code, and exclusions |
+| Problem | Why the repeated form harms readability, correctness, or maintenance |
+| Replacement | The preferred code shape or rule, with a concise example |
+| Conflicts | Existing rules, tools, contracts, or compatibility constraints |
+| Enforcement | Prose, formatter, linter, static check, template, generator, or test |
+| Migration | Future-only, touched-code, or separately approved historical migration |
+| Decision | Approver, approval reference, date, and reason |
+
+## Active candidates
+
+No recurring correction has been verified yet.
+
+## Promotion workflow
+
+1. Confirm the recurrence and root cause; do not promote personal taste from one example.
+2. Compare the candidate with the selected language authority and verified project rules.
+3. Propose the exact standards, tool, test, template, and migration files affected.
+4. Apply `GATE-01` or `GATE-02` before changing a rule or enforcement configuration.
+5. Replace obsolete active guidance, update affected verification, and mark the
+   candidate `approved`, `enforced`, `rejected`, or `superseded` with evidence.
+
+Prefer automatic enforcement for mechanical rules. Keep architecture, design,
+ownership, and decomposition judgment in prose plus code review when reliable
+mechanical enforcement would create false positives.

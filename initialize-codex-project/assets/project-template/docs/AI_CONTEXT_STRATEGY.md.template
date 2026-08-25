@@ -1,0 +1,51 @@
+# {{PROJECT_NAME}} AI Context Strategy
+
+Load the smallest evidence set that can safely answer the task, then expand only
+when a named trigger is met. Token reduction never overrides correctness,
+compatibility, security, privacy, or the approved scope.
+
+## Machine-readable routing sources
+
+- `.agents/ai/project-map.json`: modules, entrypoints, contracts, consumers,
+  tests, authority documents, exclusions, context routes, and approved budgets.
+- `.agents/ai/verification-routes.json`: evidenced commands and changed-path
+  routes. Selection does not authorize or execute a command.
+
+{{CONTEXT_ROUTING_NOTES}}
+
+## Initial context rules
+
+- Start from explicit task files, changed files, the matched module, its closest
+  applicable `AGENTS.md`, public contracts, tests, and authority documents.
+- Search before reading. Prefer symbol/path discovery and focused excerpts over
+  repository-wide file reads.
+- Do not load every linked document. Follow task-specific routing and progressive
+  disclosure.
+- Do not include generated, vendor, dependency-cache, binary, secret, or private
+  paths unless the approved task and authority rules require them.
+- The context-pack tool returns paths, reasons, and byte counts; it does not emit
+  source content.
+
+## Exclusions
+
+{{CONTEXT_EXCLUSIONS}}
+
+## Expansion gate
+
+Expand one bounded round when a configured route condition is met, a selected
+file proves another contract or consumer is affected, or required evidence is
+missing. Report the reason, new files/modules, and revised budget. Crossing the
+approved task scope still requires `GATE-02` reapproval.
+
+## Context hygiene
+
+- Keep one task/chat per coherent outcome.
+- Persist durable decisions in authority documents or ADRs, not long prompts.
+- Prefer a concise phase snapshot after approval, implementation, and
+  verification.
+- Parallel investigation may reduce wall-clock time but can increase total
+  tokens; use it only for stable, non-overlapping work packages.
+
+## Documentation gaps
+
+{{CONTEXT_GAPS}}

@@ -5,8 +5,45 @@ description: Review {{PROJECT_NAME}} changes for correctness, regressions, proje
 
 # Code Review
 
-Establish the requested baseline. Read `AGENTS.md` and only the relevant authority documents. Inspect starting status before the diff so existing work is not misattributed.
+Establish the requested baseline. Read `AGENTS.md`, the approved task contract,
+`docs/CHANGE_IMPACT.md`, and only the relevant authority documents. Inspect
+starting status before the diff so existing work is not misattributed. Review
+tracked, staged, and relevant untracked changes.
 
-Trace changed behavior through its callers and consumers. Prioritize user-visible failures, crashes/data loss, contract and compatibility breaks, security/privacy issues, concurrency/resource bugs, architecture violations, and missing regression tests. Ignore cosmetic style unless an enforced rule or correctness concern depends on it.
+For every new or materially changed source file, identify its language/module
+and apply the corresponding industry profile from `docs/CODING_STANDARDS.md`.
+Treat verified compiler, build, CI, security/privacy, compatibility, and public-
+contract requirements as hard constraints. Existing local conventions remain
+compatibility evidence but do not automatically override the industry baseline.
 
-Report actionable findings first, ordered by severity, with precise location, trigger, impact, and safe direction. Do not edit unless asked. If there are no findings, state coverage, tests observed/not run, and residual risks.
+Check whether `.agents/ai/project-map.json` and
+`.agents/ai/verification-routes.json` remain synchronized with changed module
+boundaries, public contracts, generated paths, and verification commands.
+
+First compare the diff with the approved files, modules, behaviors, and
+non-goals. Treat approval-gate or project-boundary violations as blocking.
+Trace changed behavior through callers, consumers, public contracts, data,
+configuration, deployment, and documentation. Prioritize user-visible failures,
+crashes/data loss, contract and compatibility breaks, security/privacy issues,
+concurrency/resource bugs, architecture violations, and missing regression
+tests. Review naming, API clarity, dependency direction, design-pattern fit,
+nesting, function/file responsibility, cancellation, and resource ownership
+against the selected profile. Ignore purely subjective taste that is unsupported
+by the profile, project evidence, or a concrete readability/maintenance impact.
+
+Identify substantially repeated manual edits or review corrections. At three or
+more occurrences, or when recurrence across tasks is evidenced, report a
+`docs/CODING_RULES_LOG.md` candidate with scope, examples, replacement, conflicts,
+and the best enforcement route. Review-only work does not authorize recording,
+tool changes, or historical migration.
+
+For claimed token or speed improvements, verify the proxy definition and
+baseline in `docs/AI_PERFORMANCE_BUDGET.md`; reject gains that weaken approval,
+consumer/contract coverage, security/privacy, or required verification.
+
+Report actionable findings first, ordered P0 to P3, with precise location,
+trigger, impact, violated rule, and safe direction or exception. Do not edit
+unless asked; a review-only request never authorizes fixes. If there are no
+findings, state reviewed scope, consumer/contract coverage, tests observed or
+not run, and residual risks. Repository rules supplement rather than replace
+deterministic tests, linters, and required approvals.

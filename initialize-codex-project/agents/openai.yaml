@@ -1,3 +1,4 @@
 interface:
   display_name: "Initialize Codex Project"
   short_description: "Create a verified Codex-first repository workflow"
+  default_prompt: "Inspect this repository read-only, select applicable reviewed language engineering profiles from path/build evidence, reconcile them with existing constraints, and propose a Codex-first workflow with exact files, evidence, gaps, impact, risks, and verification. Do not edit until I explicitly approve the plan; stop for renewed approval if scope expands."

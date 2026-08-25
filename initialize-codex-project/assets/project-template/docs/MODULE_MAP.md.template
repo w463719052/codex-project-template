@@ -1,0 +1,44 @@
+# {{PROJECT_NAME}} Module Map
+
+Use this map to keep responsibilities cohesive and dependencies explicit.
+Update it with an approved change whenever a module boundary, owner, public
+contract, or allowed dependency changes.
+
+## Module inventory
+
+{{MODULE_INVENTORY}}
+
+For each module record: path, responsibility, owned data, public entrypoints,
+direct dependencies, downstream consumers, tests, generated outputs, and an
+owner or decision authority when known.
+
+## Public contracts and consumers
+
+{{PUBLIC_CONTRACTS}}
+
+Public contracts include exported APIs, wire formats, events, schemas,
+configuration keys, persisted data, command output, extension points, and
+behavior relied on by another module or external consumer.
+
+## Allowed dependency direction
+
+{{DEPENDENCY_DIRECTION}}
+
+## Prohibited dependencies
+
+{{PROHIBITED_DEPENDENCIES}}
+
+## Boundary rules
+
+- Add behavior to the module that owns the responsibility and data.
+- Communicate across modules through an existing public contract where one
+  exists; do not import another module's internals.
+- Do not create a dependency cycle or a convenience dependency that reverses
+  the approved direction.
+- Keep side effects behind explicit boundaries so core logic remains testable.
+- A new cross-module dependency, public entrypoint, or shared module triggers
+  `docs/CHANGE_IMPACT.md` and renewed approval when absent from the task plan.
+
+## Documentation gaps
+
+{{MODULE_GAPS}}

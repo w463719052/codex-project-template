@@ -44,7 +44,11 @@ Record the starting status and keep it available for final comparison. Treat
 unknown product, architecture, coding, security, privacy, deployment, ownership,
 or command decisions as named documentation gaps.
 
-Use the files under `assets/project-template/` as structural templates. Replace
+Use the files under `assets/project-template/` as structural templates. The
+default `core` preset contains only repository instructions, routing, workflow,
+coding/verification guidance, rule feedback, and the three baseline skills.
+Architecture, ADR, module-map, shared-library, performance, and skill-design
+documents require verified need and explicit selection. Replace
 every `{{PLACEHOLDER}}` with verified project data, an explicitly named gap, or
 an explicitly approved decision. Never leave a placeholder or blank required
 section in generated output. Omit an inapplicable source file through the
@@ -68,7 +72,9 @@ paths, exclusions, and conservative file/byte/expansion budgets. Build
 Routing tools select context or checks; they do not read source content beyond
 metadata, execute commands, or grant execution authorization.
 
-Prefer the bundled renderer for new, non-conflicting files:
+Prefer the bundled renderer for new, non-conflicting files. Omitted selection
+uses `preset: "core"`; use `preset: "full"` only when every optional artifact is
+evidenced, or `include` for an exact approved source list:
 
 ```text
 python3 -B <skill-directory>/scripts/render_template.py --context <context.json> --target <repository> --dry-run
@@ -85,17 +91,22 @@ systems, inspect and propose a focused merge; do not bypass collision handling.
    and module boundaries, commands and their evidence, generated paths, missing
    decisions, current status, routing metadata, selected language profiles,
    profile/project conflicts, and existing-file conflicts.
-2. **Propose.** Report the exact output files, focused merges, non-goals, impact,
-   risks, documentation gaps, and verification. Do not write yet.
-3. **Obtain approval.** Wait for explicit approval of the proposed plan and file
-   set. An initial request to initialize a project is not approval of an unseen
-   plan.
+2. **Classify and propose.** L1 is a declared single-module change with exact
+   files and no protected boundary changes; a direct implementation request
+   authorizes it. L2 proposes directory boundaries and waits for one approval.
+   L3/L4 report exact files, consumers, contracts, non-goals, impact, risks,
+   gaps, and verification and wait for explicit approval.
+3. **Obtain matching authorization.** Record the direct request for L1, the
+   approved directories for L2, or the exact approved plan for L3/L4. When in
+   doubt, select the higher class.
 4. **Render approved scope.** Generate only useful files. Keep `AGENTS.md`
    concise; put detail in docs/skills and create bounded context and verification
    routes. Validate JSON schemas before writing.
-5. **Stop on expansion.** If implementation needs an unapproved file, command,
-   dependency, config change, public contract, or external action, stop and
-   present a scope-change request before continuing.
+5. **Stop on expansion.** L1 stops when its declaration no longer holds; L2
+   stops before leaving approved directories or behavior; L3/L4 stop before
+   unlisted scope. Every class stops for unapproved dependencies, build/CI/config,
+   public contracts, security/privacy boundaries, destructive/external actions,
+   or migrations.
 6. **Verify.** Run `python3 -B
    <skill-directory>/scripts/validate_templates.py`, check referenced paths and
    placeholders, validate generated skills, run `git diff --check`, and review
@@ -130,6 +141,10 @@ systems, inspect and propose a focused merge; do not bypass collision handling.
   across tasks, record or propose a candidate in `docs/CODING_RULES_LOG.md` and
   prefer an approved formatter, linter, static check, template, generator, or
   test for mechanical enforcement. Rule/config/history changes remain gated.
+- Treat three evidenced explicit operator workflow choices as a rule-tuning
+  signal. Present evidence, benefit, risk, and synchronization files, but do not
+  record behavior or change rules until the user confirms. Never infer
+  preferences from silence or weaken protected boundaries from usage habits.
 - Do not create domain skills until a repeated, stable project workflow justifies them.
 
 ## Completion
@@ -138,5 +153,5 @@ Report created/updated files, approved-scope compliance, evidence used for
 commands, validation results, unresolved gaps, and the exact daily usage:
 
 ```text
-Define task → bounded discovery if needed → approve plan → use the matching skill → $build-and-test → $code-review
+Classify task → bounded discovery if needed → matching authorization → use the matching skill → $build-and-test → $code-review
 ```

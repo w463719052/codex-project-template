@@ -5,7 +5,7 @@ description: Review {{PROJECT_NAME}} changes for correctness, regressions, proje
 
 # Code Review
 
-Establish the requested baseline. Read `AGENTS.md`, the approved task contract,
+Establish the requested baseline. Read `AGENTS.md`, the authorized task contract,
 `docs/CHANGE_IMPACT.md`, and only the relevant authority documents. Inspect
 starting status before the diff so existing work is not misattributed. Review
 tracked, staged, and relevant untracked changes.
@@ -20,8 +20,9 @@ Check whether `.agents/ai/project-map.json` and
 `.agents/ai/verification-routes.json` remain synchronized with changed module
 boundaries, public contracts, generated paths, and verification commands.
 
-First compare the diff with the approved files, modules, behaviors, and
-non-goals. Treat approval-gate or project-boundary violations as blocking.
+First compare the diff with the declared L1 files, approved L2 directories, or
+approved L3/L4 files, modules, behaviors, and non-goals. Treat authorization-gate
+or project-boundary violations as blocking.
 Trace changed behavior through callers, consumers, public contracts, data,
 configuration, deployment, and documentation. Prioritize user-visible failures,
 crashes/data loss, contract and compatibility breaks, security/privacy issues,
@@ -31,15 +32,17 @@ nesting, function/file responsibility, cancellation, and resource ownership
 against the selected profile. Ignore purely subjective taste that is unsupported
 by the profile, project evidence, or a concrete readability/maintenance impact.
 
-Identify substantially repeated manual edits or review corrections. At three or
-more occurrences, or when recurrence across tasks is evidenced, report a
+Identify substantially repeated manual edits, review corrections, or explicit
+operator workflow choices. At three or more evidenced occurrences, report a
 `docs/CODING_RULES_LOG.md` candidate with scope, examples, replacement, conflicts,
-and the best enforcement route. Review-only work does not authorize recording,
-tool changes, or historical migration.
+benefits, risks, synchronization files, and the best enforcement route.
+Review-only work does not authorize recording, rule synchronization, tool
+changes, or historical migration. Never infer preference from silence.
 
-For claimed token or speed improvements, verify the proxy definition and
-baseline in `docs/AI_PERFORMANCE_BUDGET.md`; reject gains that weaken approval,
-consumer/contract coverage, security/privacy, or required verification.
+For claimed token or speed improvements, require a defined proxy or a paired
+real-task A/B baseline when performance guidance was generated. Reject gains
+that weaken authorization, consumer/contract coverage, security/privacy, or
+required verification.
 
 Report actionable findings first, ordered P0 to P3, with precise location,
 trigger, impact, violated rule, and safe direction or exception. Do not edit

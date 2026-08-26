@@ -16,6 +16,24 @@ from typing import Any, Dict, List, Mapping, Optional, Sequence, Set, Tuple
 
 PLACEHOLDER_PATTERN = re.compile(r"\{\{([A-Z][A-Z0-9_]*)\}\}")
 STATE_PATH = PurePosixPath("docs/CODEX_TEMPLATE_STATE.json")
+CORE_SOURCES = (
+    ".agents/ai/project-map.json.template",
+    ".agents/ai/verification-routes.json.template",
+    "AGENTS.md.template",
+    "docs/AI_CONTEXT_STRATEGY.md.template",
+    "docs/CHANGE_IMPACT.md",
+    "docs/CODEX_USAGE.md.template",
+    "docs/CODEX_WORKFLOW.md",
+    "docs/CODING_RULES_LOG.md.template",
+    "docs/CODING_STANDARDS.md.template",
+    "docs/TASK_TEMPLATE.md.template",
+    "docs/VERIFICATION.md.template",
+    "skills/build-and-test/SKILL.md.template",
+    "skills/build-and-test/scripts/select_checks.py",
+    "skills/code-review/SKILL.md.template",
+    "skills/context-discovery/SKILL.md.template",
+    "skills/context-discovery/scripts/build_context_pack.py",
+)
 
 
 class RenderError(RuntimeError):
@@ -108,7 +126,7 @@ def load_context(path: Path) -> Tuple[Dict[str, Any], Optional[List[str]]]:
         raise RenderError(f"cannot load context {path}: {exc}") from exc
     if not isinstance(raw, dict):
         raise RenderError("context root must be a JSON object")
-    allowed_keys = {"values", "include"}
+    allowed_keys = {"values", "include", "preset"}
     unknown_keys = sorted(set(raw) - allowed_keys)
     if unknown_keys:
         raise RenderError(f"unknown context keys: {', '.join(unknown_keys)}")
@@ -135,6 +153,11 @@ def load_context(path: Path) -> Tuple[Dict[str, Any], Optional[List[str]]]:
                 raise RenderError(f"context value for {key} must not be blank")
         values[key] = value
     include_raw = raw.get("include")
+    preset_raw = raw.get("preset", "core")
+    if not isinstance(preset_raw, str) or preset_raw not in {"core", "full"}:
+        raise RenderError("context.preset must be 'core' or 'full'")
+    if include_raw is not None and "preset" in raw:
+        raise RenderError("context.include and context.preset are mutually exclusive")
     include: Optional[List[str]] = None
     if include_raw is not None:
         if not isinstance(include_raw, list) or not all(
@@ -144,6 +167,8 @@ def load_context(path: Path) -> Tuple[Dict[str, Any], Optional[List[str]]]:
         include = [normalize_source_name(item) for item in include_raw]
         if len(include) != len(set(include)):
             raise RenderError("context.include contains duplicate paths")
+    elif preset_raw == "core":
+        include = list(CORE_SOURCES)
     return values, include
 
 

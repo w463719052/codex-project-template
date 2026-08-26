@@ -17,21 +17,45 @@ rule conflicts as proposal inputs, not silent implementation choices.
 State the goal, non-goals, assumptions, compatibility, risks, documentation
 gaps, and observable completion criteria. Do not modify files or external state.
 
-## 2. Propose the scope contract
+## 2. Classify and declare the scope
 
 Use `docs/TASK_TEMPLATE.md` and `docs/CHANGE_IMPACT.md`. Name every proposed
 file/module, behavior and contract change, verification command, non-goal, and
 known risk. For each command, cite its repository or CI evidence.
 
-Every implementation applies `GATE-01`. A small task may use a concise plan but
-does not skip approval.
+Apply the most conservative matching class:
 
-## 3. Approval gate (`GATE-01`)
+- **L1 — bounded local change.** The exact source/test/doc files are known, the
+  change stays in one module, and it preserves public contracts, schemas,
+  dependencies, build/CI/configuration, persistent data, security/privacy,
+  deployment, and external state. A direct request to implement, fix, or modify
+  authorizes the agent to declare this scope concisely and proceed. Questions,
+  diagnosis, review, or status requests do not authorize writes.
+- **L2 — approved module or directory change.** The behavior is bounded but
+  implementation may discover or add files inside explicitly approved
+  directories. Present the goal, directory boundaries, protected exclusions,
+  risks, and verification, then wait for one approval.
+- **L3 — cross-module or contract-sensitive change.** Present exact files,
+  consumers, contracts, impact, risks, and verification, then wait for explicit
+  approval.
+- **L4 — architecture, security/privacy, migration, destructive, external, or
+  high-cost failure change.** Apply the complete L3 contract plus rollback,
+  operational, and owner evidence. Wait for explicit approval.
 
-Wait for explicit approval of the plan and file set. An initial request to
-implement a feature or fix is not approval of an unseen plan. Record approval in
-the task contract before editing. Transition `proposed → approved` only after
-that explicit approval.
+If classification is uncertain, use the next higher class. Task size alone
+never makes a protected boundary L1 or L2.
+
+## 3. Authorization gate (`GATE-01`)
+
+For L1, record the direct implementation request as authorization, announce the
+class, exact files, behavior, non-goals, and checks, and proceed without waiting
+for another confirmation. If any L1 condition is unverified, reclassify before
+writing.
+
+For L2, wait for explicit approval of the directory-boundary plan. Files may
+change within those directories when they remain inside the approved behavior
+and protected exclusions. For L3/L4, wait for explicit approval of the exact
+plan and file set. Record the authorization source in the task contract.
 
 Allowed before approval: read files, inspect status/diffs/configuration, list or
 dry-run confirmed commands, and prepare the proposal. Not allowed: file writes,
@@ -43,16 +67,20 @@ configuration changes.
 - Make the smallest coherent change.
 - Update tests with behavior.
 - Apply `WORKTREE-01` and `MODULE-01`.
-- Edit only approved files and modules.
+- For L1, edit only the declared files. For L2, edit only inside approved
+  directories. For L3/L4, edit only approved files and modules.
 - Apply the selected language industry baseline to new and materially changed
   code while preserving verified hard constraints and approved compatibility.
 - Run the smallest relevant check after each meaningful stage.
 
 ## 5. Scope-change gate (`GATE-02`)
 
-Stop immediately when an assumption fails or implementation requires an
-unapproved file/module, public API/schema change, dependency, build/CI/config
-change, destructive operation, external action, or unrelated cleanup. Report:
+Stop immediately when an assumption fails or the class boundary no longer
+holds. L1 must reclassify before touching an undeclared file. L2 requires renewed
+approval before leaving an approved directory or approved behavior. Every class
+requires renewed approval before a public API/schema change, dependency,
+build/CI/config change, destructive operation, external action, protected
+security/privacy boundary, migration, or unrelated cleanup. Report:
 
 - why the approved plan is insufficient;
 - the newly affected files, modules, consumers, and risks;
@@ -75,9 +103,11 @@ Run `git diff --check`, inspect relevant diff/stat/status against the starting
 state, confirm every change is approved, and check for generated, secret,
 private, binary, or unrelated files. Trace changed behavior through consumers
 and report changes, evidence, unverified items, and residual risk. If the same
-manual correction occurs in at least three places or recurs across tasks, record
-or propose a candidate in `docs/CODING_RULES_LOG.md`; changing a rule, tool, or
-historical scope still requires the applicable approval gate.
+manual correction or explicit operator workflow choice is evidenced three times
+across locations or tasks, present a candidate using
+`docs/CODING_RULES_LOG.md` under `ADAPT-01`. Do not persist the observation or synchronize a
+rule until the user confirms it. Rule, tool, configuration, or historical-scope
+changes still require the applicable authorization gate.
 
 ## Parallel work
 

@@ -1,17 +1,21 @@
-# {{PROJECT_NAME}} Coding Rules Log
+# {{PROJECT_NAME}} Coding and Workflow Rules Log
 
-This log turns repeated manual corrections into durable, reviewable engineering
-rules. It is evidence, not automatic write authorization.
+This log turns repeated manual corrections and explicit operator workflow
+choices into durable, reviewable rules. It is evidence, not telemetry or
+automatic write authorization.
 
 ## Promotion threshold
 
-Create a candidate when substantially the same manual edit or review correction:
+Present a candidate when substantially the same manual edit, review correction,
+or explicit operator choice:
 
 - appears in at least three locations in the inspected scope; or
 - recurs across separate approved tasks, reviews, or regressions.
 
-Do not infer recurrence without observable diffs, review records, tests, or an
-owner-provided example.
+Do not infer recurrence or preference from silence. Use only current
+conversation evidence, approved task records, review results, repository
+history, tests, or owner-provided examples. Do not store prompt text, source
+content, credentials, personal data, or unrelated behavior metadata.
 
 ## Candidate record
 
@@ -22,6 +26,7 @@ For each candidate, record:
 | ID | Stable `RULE-CANDIDATE-NNN` identifier |
 | Status | observed / proposed / approved / enforced / rejected / superseded |
 | Evidence | Exact files, reviews, tasks, or test failures showing recurrence |
+| Kind | coding / verification-route / approval-scope / output-format / other |
 | Scope | Applicable languages, modules, generated/manual code, and exclusions |
 | Problem | Why the repeated form harms readability, correctness, or maintenance |
 | Replacement | The preferred code shape or rule, with a concise example |
@@ -29,6 +34,7 @@ For each candidate, record:
 | Enforcement | Prose, formatter, linter, static check, template, generator, or test |
 | Migration | Future-only, touched-code, or separately approved historical migration |
 | Decision | Approver, approval reference, date, and reason |
+| Reconsideration | Condition or date before a rejected candidate may be raised again |
 
 ## Active candidates
 
@@ -36,13 +42,19 @@ No recurring correction has been verified yet.
 
 ## Promotion workflow
 
-1. Confirm the recurrence and root cause; do not promote personal taste from one example.
+1. Confirm at least three occurrences and the root cause; do not promote one-off taste.
 2. Compare the candidate with the selected language authority and verified project rules.
-3. Propose the exact standards, tool, test, template, and migration files affected.
-4. Apply `GATE-01` or `GATE-02` before changing a rule or enforcement configuration.
-5. Replace obsolete active guidance, update affected verification, and mark the
+3. Present the evidence, suggested rule, benefit, risk, and exact synchronization files.
+4. Wait for explicit confirmation before recording the candidate or changing a rule.
+5. Apply `GATE-01` or `GATE-02` before changing a rule or enforcement configuration.
+6. Replace obsolete active guidance, update affected verification, and mark the
    candidate `approved`, `enforced`, `rejected`, or `superseded` with evidence.
 
 Prefer automatic enforcement for mechanical rules. Keep architecture, design,
 ownership, and decomposition judgment in prose plus code review when reliable
 mechanical enforcement would create false positives.
+
+Workflow habits may justify a narrower default check route, a broader L2
+directory boundary, or a stable reporting format. They never justify silently
+weakening security/privacy, compatibility, public-contract, required-test, or
+destructive/external-action protections.

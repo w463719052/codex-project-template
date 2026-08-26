@@ -5,7 +5,9 @@ description: Build a bounded, read-only context plan for {{PROJECT_NAME}} from a
 
 # Context Discovery
 
-Read `.agents/ai/project-map.json` and `docs/AI_CONTEXT_STRATEGY.md`. Start from
+L1 skips this workflow when exact files and consumers are already known. For
+L2-L4 discovery, read `.agents/ai/project-map.json` and
+`docs/AI_CONTEXT_STRATEGY.md`. Start from
 the task type, explicit module/file hints, and changed files. Run the bundled
 `scripts/build_context_pack.py` to select paths, reasons, and byte counts within
 the approved context budget.

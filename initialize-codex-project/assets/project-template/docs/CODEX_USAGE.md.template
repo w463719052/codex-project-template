@@ -11,9 +11,9 @@
 ## Daily workflow
 
 ```text
-Define the task with docs/TASK_TEMPLATE.md
+Classify the task with docs/TASK_TEMPLATE.md
                 ↓
-Review and explicitly approve the plan and file set
+L1 declare and execute; L2 approve directories; L3/L4 approve exact scope
                 ↓
 Use a matching project skill or execute the scoped task
                 ↓
@@ -25,7 +25,8 @@ $code-review
 ### Feature
 
 ```text
-Define this feature with docs/TASK_TEMPLATE.md and apply GATE-01. Use
+Classify this feature with docs/TASK_TEMPLATE.md and apply GATE-01. A direct
+implementation request authorizes only a declared, bounded L1 change. Use
 $context-discovery when affected files or consumers are not already known.
 For every changed source file, use the detected language profile in
 docs/CODING_STANDARDS.md. Stop under GATE-02 if implementation exceeds the
@@ -46,13 +47,14 @@ Use $code-review. Review the current diff and report findings first.
 Do not modify files.
 ```
 
-### Repeated corrections
+### Repeated corrections and workflow choices
 
 ```text
-If the same manual edit or review correction appears in at least three places
-or recurs across tasks, record evidence in docs/CODING_RULES_LOG.md. Propose an
-approved standards or automation replacement; do not silently change tool
-configuration or migrate unrelated historical code.
+If the same manual edit, review correction, or explicit operator workflow choice
+is evidenced at least three times, present a candidate using
+docs/CODING_RULES_LOG.md. Do not record the behavior or synchronize rules until
+the user confirms it. Never infer preferences from silence or weaken protected
+verification, security, privacy, compatibility, or contract boundaries.
 ```
 
 ## Project-specific commands

@@ -29,7 +29,7 @@ class RenderTemplateTests(unittest.TestCase):
         self.temporary.cleanup()
 
     def write_context(
-        self, include=None, omit=None, extras=None, filename="context.json"
+        self, include=None, preset=None, omit=None, extras=None, filename="context.json"
     ) -> Path:
         values = {}
         for name in all_placeholder_names(source_root()):
@@ -50,6 +50,8 @@ class RenderTemplateTests(unittest.TestCase):
         context = {"values": values}
         if include is not None:
             context["include"] = include
+        if preset is not None:
+            context["preset"] = preset
         path = self.root / filename
         path.write_text(json.dumps(context), encoding="utf-8")
         return path
@@ -131,6 +133,34 @@ class RenderTemplateTests(unittest.TestCase):
             "selected industry language baseline first while treating",
             standards.read_text(encoding="utf-8"),
         )
+        self.assertFalse((target / "docs" / "ARCHITECTURE.md").exists())
+        state = json.loads(
+            (target / "docs" / "CODEX_TEMPLATE_STATE.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertTrue(
+            any(entry["target"] == "docs/CODEX_WORKFLOW.md" for entry in state["files"])
+        )
+
+    def test_full_preset_renders_optional_documents(self) -> None:
+        context = self.write_context(preset="full")
+        target = self.root / "target"
+        render_project(context, target, write=True)
+        self.assertTrue((target / "docs" / "ARCHITECTURE.md").is_file())
+        self.assertTrue((target / "docs" / "AI_PERFORMANCE_BUDGET.md").is_file())
+
+    def test_include_and_preset_are_mutually_exclusive(self) -> None:
+        context = self.write_context(
+            include=["AGENTS.md.template"], preset="core"
+        )
+        with self.assertRaisesRegex(RenderError, "mutually exclusive"):
+            render_project(context, self.root / "target", write=False)
+
+    def test_unknown_preset_is_rejected(self) -> None:
+        context = self.write_context(preset="everything")
+        with self.assertRaisesRegex(RenderError, "must be 'core' or 'full'"):
+            render_project(context, self.root / "target", write=False)
 
     def test_missing_placeholder_is_rejected(self) -> None:
         context = self.write_context(

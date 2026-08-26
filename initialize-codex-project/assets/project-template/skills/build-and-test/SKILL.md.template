@@ -5,12 +5,14 @@ description: Run the verified build, test, format, lint, static-analysis, and di
 
 # Build and Test
 
-Read the approved task contract, `docs/CHANGE_IMPACT.md`,
+Read the authorized task contract, `docs/CHANGE_IMPACT.md`,
 `docs/VERIFICATION.md`, and starting `git status --short`. Confirm the changed
-files and modules remain inside the approved scope. First run
+files and modules remain inside the authorized scope. First run
 `scripts/select_checks.py` for each changed path to produce a deterministic
 candidate list. Review its evidence and task authorization before executing
-anything; selection itself never authorizes or runs commands (`VERIFY-01`). Run
+anything; selection itself never authorizes or runs commands (`VERIFY-01`). A
+declared L1 implementation authorizes verified, non-mutating, scope-relevant
+checks; L2-L4 use their approved command set. Run
 the smallest authorized relevant check, then required target/suite,
 consumer/contract, and build checks.
 

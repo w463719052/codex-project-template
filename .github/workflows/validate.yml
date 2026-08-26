@@ -29,6 +29,9 @@ jobs:
       - name: Run unit tests
         run: python3 -B -m unittest discover -s tests -v
 
+      - name: Validate A/B study analyzer example
+        run: python3 -B initialize-codex-project/scripts/analyze_ab_study.py --input initialize-codex-project/benchmarks/ab-study.example.json
+
       - name: Check whitespace and generated cleanliness
         shell: bash
         run: |

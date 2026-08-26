@@ -2,13 +2,16 @@
 
 ## Approval state
 
-- Status: proposed / approved / reapproval-required / verified
+- Status: declared-L1 / proposed / approved / reapproval-required / verified
+- Task class: L1 / L2 / L3 / L4
+- Classification evidence:
 - Approved by:
 - Approval reference or message:
 - Approved files/directories:
 - Approved operations:
 
-Implementation must not begin while status is `proposed` (`GATE-01`).
+L1 may begin at `declared-L1` only when a direct implementation request and all
+L1 criteria are recorded. L2-L4 must not begin while status is `proposed`.
 
 ## Goal
 
@@ -20,7 +23,7 @@ Implementation must not begin while status is `proposed` (`GATE-01`).
 - Authority documents:
 - Existing entrypoints:
 - Reproduction/evidence:
-- Task class (L1/L2/L3/L4):
+- Direct implementation authorization, if L1:
 - Context route/module hints:
 - Initial file/byte budget and expansion rounds:
 - Detected source languages and selected industry profiles:
@@ -33,7 +36,9 @@ Implementation must not begin while status is `proposed` (`GATE-01`).
 - Architecture/dependency direction:
 - Compatibility/security/privacy:
 - Allowed dependencies:
-- Allowed files/directories:
+- Declared files, if L1:
+- Approved directories, if L2:
+- Approved exact files/modules, if L3/L4:
 - Forbidden files/directories:
 - Forbidden operations/external actions:
 
@@ -52,9 +57,10 @@ Implementation must not begin while status is `proposed` (`GATE-01`).
 - [ ] Tests/fixtures
 - [ ] Documentation
 
-For every checked area, identify direct callers, downstream consumers, public
-contracts, data/configuration, tests, and deployment or operational impact in
-`docs/CHANGE_IMPACT.md`.
+For L1, confirm these categories are preserved with concise evidence. For L2,
+complete the applicable module impact. For L3/L4, identify every direct caller,
+downstream consumer, public contract, data/configuration path, test, and
+deployment or operational impact in `docs/CHANGE_IMPACT.md`.
 
 ## Non-goals
 
@@ -63,8 +69,8 @@ contracts, data/configuration, tests, and deployment or operational impact in
 ## Execution
 
 - [ ] Read-only investigation completed.
-- [ ] Exact plan and file list presented.
-- [ ] Explicit approval recorded above.
+- [ ] L1 exact declaration or L2-L4 plan presented.
+- [ ] Direct L1 authorization or explicit L2-L4 approval recorded above.
 - [ ] Scope-change triggers reviewed.
 - Suggested project skill:
 - Operator-selected model/reasoning, if relevant:
@@ -79,15 +85,28 @@ contracts, data/configuration, tests, and deployment or operational impact in
 
 ## Scope-change triggers (`GATE-02`)
 
-Stop and request renewed approval before:
+Stop and reclassify or request renewed approval before:
 
-- touching an unlisted file or module;
+- L1 touches an undeclared file or no longer meets every L1 condition;
+- L2 leaves an approved directory or changes behavior outside the approved scope;
+- L3/L4 touch an unlisted file or module;
 - changing a public API, schema, persistent data, or compatibility behavior;
 - adding/updating a dependency or lockfile;
 - changing build, CI, deployment, signing, secrets, or environment configuration;
 - creating a new cross-module dependency or shared library;
 - performing a destructive operation or external write;
 - expanding the task to unrelated cleanup or refactoring.
+
+## Rule-adaptation observation
+
+- Repeated explicit operator choice observed:
+- Prior task/review evidence:
+- Threshold reached (at least three occurrences): yes / no
+- Candidate suggested to user: yes / no
+- User confirmed recording or synchronization: yes / no / pending
+
+Do not infer a preference from silence and do not write an observation or rule
+change until the user confirms it.
 
 ## Verification commands
 

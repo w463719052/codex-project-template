@@ -19,11 +19,12 @@ consistent with one another.
 
 Use these stable rule IDs in plans, templates, reviews, and validation results:
 
-- `GATE-01`: before editing, report files, behavior, non-goals, risks, and
-  verification; write only after explicit approval of that exact plan.
-- `GATE-02`: stop for renewed approval before any unlisted file/module,
-  dependency, CI/build/config change, public contract, external action, or
-  newly discovered scope.
+- `GATE-01`: classify work as L1-L4 before editing. An explicit implementation
+  request authorizes a declared, bounded L1 change; L2 requires one approved
+  directory-boundary plan; L3/L4 require explicit approval of the exact plan.
+- `GATE-02`: apply the matching expansion gate. L1 stops when its declared
+  bounded scope no longer holds; L2 stops before leaving approved directories
+  or changing protected boundaries; L3/L4 stop before any unlisted scope.
 - `WORKTREE-01`: preserve existing work; never reset, clean, overwrite, commit,
   rewrite history, or reformat unrelated files.
 - `EVIDENCE-01`: derive target-specific facts and commands from verified target
@@ -35,6 +36,9 @@ Use these stable rule IDs in plans, templates, reviews, and validation results:
   dependency direction, consumers, and shared-library gates.
 - `VERIFY-01`: select only evidenced, scope-relevant checks; execution remains
   separately authorized, and not-run never means pass.
+- `ADAPT-01`: after three evidenced explicit operator choices, suggest a rule
+  candidate; record or synchronize it only after confirmation, and never use
+  habits to weaken protected boundaries.
 
 ## Repository invariants
 
@@ -49,6 +53,9 @@ Use these stable rule IDs in plans, templates, reviews, and validation results:
 - If substantially the same manual correction appears at least three times or
   recurs across tasks, require a recorded candidate and an approved rule or
   automation replacement; never expand silently into config or history migration.
+- Treat repeated, evidenced operator workflow choices the same way: suggest a
+  scoped rule adjustment after three occurrences, but never persist an
+  observation or synchronize a rule without explicit user confirmation.
 - Files ending in `.template` render without that suffix. Files below template
   `skills/` render below target `.agents/skills/`.
 - All template placeholders must be supplied by verified discovery or an
@@ -66,6 +73,8 @@ Run after relevant changes:
 python3 -B initialize-codex-project/scripts/validate_templates.py
 python3 -B -m unittest discover -s tests -v
 python3 -B initialize-codex-project/scripts/benchmark_routing.py
+python3 -B initialize-codex-project/scripts/analyze_ab_study.py \
+  --input initialize-codex-project/benchmarks/ab-study.example.json
 git diff --check
 git status --short
 ```

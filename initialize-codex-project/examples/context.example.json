@@ -41,8 +41,7 @@
           "id": "default-task",
           "initial_paths": [
             "AGENTS.md",
-            "docs/ARCHITECTURE.md",
-            "docs/MODULE_MAP.md",
+            "docs/CODEX_WORKFLOW.md",
             "docs/CODING_STANDARDS.md"
           ],
           "module_ids": [
@@ -67,8 +66,7 @@
         {
           "authority_docs": [
             "AGENTS.md",
-            "docs/ARCHITECTURE.md",
-            "docs/MODULE_MAP.md",
+            "docs/CODEX_WORKFLOW.md",
             "docs/CODING_STANDARDS.md"
           ],
           "consumers": [],
@@ -138,5 +136,6 @@
       ],
       "schema_version": 1
     }
-  }
+  },
+  "preset": "core"
 }

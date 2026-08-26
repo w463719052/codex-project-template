@@ -22,6 +22,13 @@
       "mutates": false
     },
     {
+      "command": "python3 -B initialize-codex-project/scripts/analyze_ab_study.py --input initialize-codex-project/benchmarks/ab-study.example.json",
+      "evidence": "AGENTS.md#Verification",
+      "id": "ab-study-example",
+      "kind": "static",
+      "mutates": false
+    },
+    {
       "command": "git diff --check",
       "evidence": "AGENTS.md#Verification",
       "id": "diff-check",

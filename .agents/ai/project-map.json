@@ -30,6 +30,7 @@
       "id": "tooling-change",
       "initial_paths": [
         "initialize-codex-project/scripts/render_template.py",
+        "initialize-codex-project/scripts/analyze_ab_study.py",
         "initialize-codex-project/scripts/select_language_profiles.py",
         "initialize-codex-project/scripts/validate_templates.py",
         "tests/test_language_profile_selection.py",
@@ -134,10 +135,11 @@
       "paths": ["initialize-codex-project/scripts/**"],
       "public_contracts": [
         "initialize-codex-project/scripts/render_template.py",
+        "initialize-codex-project/scripts/analyze_ab_study.py",
         "initialize-codex-project/scripts/select_language_profiles.py"
       ],
       "responsibility": "Dependency-free rendering, language-profile selection, validation, and routing benchmark tools.",
-      "tests": ["tests/test_render_template.py"]
+      "tests": ["tests/test_render_template.py", "tests/test_ab_study.py"]
     },
     {
       "authority_docs": ["AGENTS.md"],
@@ -145,6 +147,7 @@
       "dependencies": ["initializer", "template-assets", "tooling"],
       "entrypoints": [
         "tests/test_language_profile_selection.py",
+        "tests/test_ab_study.py",
         "tests/test_render_template.py",
         ".github/workflows/validate.yml"
       ],
@@ -158,6 +161,7 @@
       "public_contracts": [".github/workflows/validate.yml"],
       "responsibility": "Regression, language-selection, security, deterministic routing, benchmark fixtures, and repository CI validation.",
       "tests": [
+        "tests/test_ab_study.py",
         "tests/test_language_profile_selection.py",
         "tests/test_render_template.py"
       ]

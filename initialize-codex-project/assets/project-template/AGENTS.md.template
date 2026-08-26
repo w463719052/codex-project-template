@@ -7,7 +7,7 @@ the documents and source files relevant to the current task.
 
 {{AUTHORITY_DOCUMENTS}}
 
-Within repository guidance, use this fixed order: the explicitly approved task
+Within repository guidance, use this fixed order: the authorized task
 contract; the closest applicable nested `AGENTS.override.md` or `AGENTS.md`;
 this root file; then the authority documents in their listed order. Higher-level
 system, security, privacy, legal, and compatibility constraints always remain in
@@ -20,12 +20,13 @@ choose a rule from an inferred timestamp.
 
 ## Mandatory rules
 
-- `GATE-01`: investigate read-only; report goal, constraints, non-goals,
-  modules/consumers, exact files, acceptance, risks, and verification; do not
-  write before explicit approval of that plan.
-- `GATE-02`: treat the approved plan as a scope contract. Stop for renewed
-  approval before an unlisted file/module, dependency, build/CI/config change,
-  public contract/schema, destructive operation, or external action.
+- `GATE-01`: classify the task before editing. A direct implementation request
+  authorizes a declared L1 change; L2 requires one approved directory-boundary
+  plan; L3/L4 require explicit approval of the exact plan and file set.
+- `GATE-02`: stop when the selected class boundary fails. L1 reclassifies on
+  any unexpected scope; L2 stops before leaving approved directories; every
+  class stops before an unapproved dependency, build/CI/config change, public
+  contract/schema, destructive operation, or external action.
 - `WORKTREE-01`: preserve existing work; do not reset, clean, overwrite,
   commit, rewrite history, or reformat unrelated files.
 - `EVIDENCE-01`: use only verified project facts and commands. Record unknowns
@@ -38,6 +39,9 @@ choose a rule from an inferred timestamp.
 - `VERIFY-01`: select evidenced scope-relevant checks through
   `docs/VERIFICATION.md`; command selection never authorizes execution, and
   not-run never means pass.
+- `ADAPT-01`: after three evidenced explicit operator choices, suggest a rule
+  candidate; record or synchronize it only after confirmation, and never use
+  habits to weaken protected boundaries.
 - For every new or materially changed source file, detect its language and apply
   the selected industry profile in `docs/CODING_STANDARDS.md`. Treat verified
   build, compatibility, security, privacy, and public-contract requirements as
@@ -48,17 +52,19 @@ choose a rule from an inferred timestamp.
 - Add or update tests in proportion to changed behavior.
 - Trace changed behavior through callers, consumers, contracts, data, config,
   deployment, and documentation using `docs/CHANGE_IMPACT.md`.
+- Under `ADAPT-01`, when three evidenced operator choices or corrections suggest a durable rule,
+  present a rule-tuning candidate from `docs/CODING_RULES_LOG.md`. Never record
+  behavior or synchronize rules without explicit user confirmation.
 - Finish with `git diff --check`, relevant diff/status review, and a report of unverified items and residual risk.
 
 ## Workflow entrypoints
 
-- New feature or fix: define and approve the task with `docs/TASK_TEMPLATE.md`, then follow `docs/CODEX_WORKFLOW.md`.
+- New feature or fix: classify it with `docs/TASK_TEMPLATE.md`, then follow `docs/CODEX_WORKFLOW.md`.
 - Large or unfamiliar task: use `$context-discovery` before proposing scope.
 - Build and test: use `$build-and-test` or follow `docs/VERIFICATION.md`.
 - Review: use `$code-review`; a review-only request does not authorize fixes.
-- Architecture and modules: follow `docs/ARCHITECTURE.md` and `docs/MODULE_MAP.md`.
 - Coding rules: follow `docs/CODING_STANDARDS.md`, its selected language
   profiles, enforcement sources, and `docs/CODING_RULES_LOG.md`.
-- Cross-boundary decisions: use `docs/ADR_TEMPLATE.md`.
-- Shared library work: follow `docs/SHARED_LIBRARY_STANDARD.md`.
-- Skill maintenance: follow `docs/SKILLS_SPEC.md`.
+- Architecture, ADR, module-map, shared-library, performance, and skill-design
+  guidance is optional and applies only when listed in the generated template
+  state and selected from verified project evidence.

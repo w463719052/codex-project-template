@@ -4,6 +4,21 @@ All notable changes to the formally versioned project template are recorded
 here. Template versioning follows semantic versioning for generated-contract
 compatibility; repository commits remain the detailed source history.
 
+## 2.0.0 - 2026-08-26
+
+- Replace the universal pre-edit approval round trip with conservative L1-L4
+  authorization: direct bounded L1 execution, once-approved L2 directories, and
+  exact L3/L4 plans with protected boundaries retained at every level.
+- Make the default render a focused core preset; keep the full preset and exact
+  include lists for evidence-selected architecture, ADR, shared-library,
+  performance, and skill-design artifacts.
+- Expand the rules log to suggest evidence-backed workflow adjustments after
+  three explicit recurring operator choices, with no persistence or rule
+  synchronization before confirmation.
+- Add a dependency-free paired real-task A/B analyzer for first-pass success,
+  user round trips, elapsed time, optional token telemetry, scope escapes, and
+  review defects without treating example data as performance evidence.
+
 ## 1.3.0 - 2026-08-26
 
 - Add a C engineering profile grounded in ISO/IEC 9899:2024 and SEI CERT C,

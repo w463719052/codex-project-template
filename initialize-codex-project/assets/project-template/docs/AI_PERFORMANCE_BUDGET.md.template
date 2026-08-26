@@ -16,6 +16,28 @@ Record representative small, module-local, cross-module, and public-contract
 tasks. Measure at least selected files/bytes, tool calls, elapsed time, checks,
 rework, and observed token usage when the active Codex surface exposes it.
 
+## Paired A/B study
+
+Use the repository A/B analyzer only with paired runs of the same real task,
+base revision, model configuration, environment, and acceptance checks. Arm A
+uses the target's original guidance or the prior strict/full workflow; arm B
+uses the tiered/core workflow. Record first-pass success, user round trips,
+elapsed seconds, input/output/total tokens when available, scope escapes, and
+review defects. Missing telemetry remains missing and is never treated as zero.
+
+- First-pass success means all predeclared acceptance checks pass before
+  user-directed rework.
+- User round trips count requests for clarification, approval, correction, or
+  missing input after the initial task.
+- Scope escapes count writes or attempted writes outside the authorized class
+  boundary; review defects count distinct actionable P0-P3 findings.
+- Elapsed time and token telemetry must come from the same measurement method in
+  both arms.
+
+Example or synthetic records validate the analyzer but are not performance
+evidence. Report sample size, incomplete pairs, configuration mismatches, and
+metric deltas; do not claim causality from unpaired or confounded runs.
+
 ## Quality guardrails
 
 {{QUALITY_GUARDRAILS}}
@@ -26,10 +48,13 @@ review defect detection.
 
 ## Task and reasoning classes
 
-- L1: local, public-contract-preserving change with known verification.
-- L2: module-local behavior or debugging with bounded consumers.
-- L3: cross-module, compatibility, concurrency, or data-flow change.
-- L4: architecture, security/privacy, migration, or high-cost failure mode.
+- L1: declared local, public-contract-preserving change with known verification;
+  a direct implementation request authorizes execution.
+- L2: module-local behavior or debugging inside once-approved directories.
+- L3: cross-module, compatibility, concurrency, or data-flow change with an
+  exact approved plan.
+- L4: architecture, security/privacy, migration, destructive/external, or
+  high-cost failure work with complete impact and rollback evidence.
 
 The operator selects the model and reasoning level. Repository guidance records
 task complexity and evidence; it does not pin a changing product/model name.

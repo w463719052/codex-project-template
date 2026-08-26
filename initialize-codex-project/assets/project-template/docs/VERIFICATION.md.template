@@ -10,9 +10,11 @@ python3 -B .agents/skills/build-and-test/scripts/select_checks.py \
   --project-root <repository> --changed-file <relative-path>
 ```
 
-Its output always has `execution_authorized: false`. Review scope, evidence,
-prerequisites, mutation/external effects, and task authorization before running
-any selected command.
+Its output always has `execution_authorized: false`; the selector itself cannot
+grant permission. A declared L1 implementation authorizes verified,
+non-mutating, scope-relevant checks. L2-L4 use the checks approved in their task
+contract. Mutating, external, credentialed, destructive, dependency, signing,
+or configuration commands always require separate explicit authorization.
 
 ## Verified project commands
 
@@ -73,9 +75,10 @@ git status --short
 
 Compare against the starting status. Check for secrets, personal data, generated output, editor state, binaries, fixtures, lockfiles, and unrelated formatting according to project policy.
 
-When review evidence shows the same manual correction at least three times or
-across tasks, confirm that `docs/CODING_RULES_LOG.md` contains or is proposed to
-contain a scoped candidate. Do not mutate enforcement configuration without approval.
+When review evidence shows the same manual correction or explicit operator
+workflow choice at least three times, present a scoped candidate using
+`docs/CODING_RULES_LOG.md`. Do not record the observation, synchronize rules, or
+mutate enforcement configuration without confirmation and applicable approval.
 
 ## Result record
 

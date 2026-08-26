@@ -1,8 +1,11 @@
 # Change Impact Analysis
 
-Complete the applicable sections in the task record before implementation.
-Write `none` with evidence instead of silently skipping a category. A newly
-discovered impact outside the approved plan triggers renewed approval.
+Apply detail in proportion to the task class. L1 records concise evidence that
+contracts and protected boundaries are unchanged. L2 completes applicable
+module and directory impacts. L3/L4 complete every section before
+implementation. Write `none` with evidence instead of silently skipping a
+category. A newly discovered impact outside the class boundary triggers
+reclassification or renewed approval.
 
 ## Change surface
 
@@ -45,7 +48,7 @@ downstream.
 
 ## Scope decision
 
-- [ ] All affected files/modules are in the approved task contract.
+- [ ] L1 files, L2 directories, or L3/L4 exact scope remain authorized.
 - [ ] Public contract and compatibility changes are explicitly approved.
 - [ ] New dependencies/configuration/external actions are explicitly approved.
 - [ ] Verification covers direct behavior and applicable consumers.

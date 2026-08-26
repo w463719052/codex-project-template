@@ -13,6 +13,7 @@ from types import ModuleType
 from typing import Any, Dict, List, Mapping, Sequence
 
 from render_template import (
+    CORE_SOURCES,
     PLACEHOLDER_PATTERN,
     STATE_PATH,
     RenderError,
@@ -92,6 +93,7 @@ RULE_IDS = {
     "CONTEXT-01",
     "MODULE-01",
     "VERIFY-01",
+    "ADAPT-01",
 }
 
 
@@ -361,6 +363,9 @@ def validate() -> None:
     missing = sorted(EXPECTED_SOURCES - set(sources))
     if missing:
         fail("missing required template sources: " + ", ".join(missing))
+    missing_core = sorted(set(CORE_SOURCES) - set(sources))
+    if missing_core:
+        fail("core preset references missing sources: " + ", ".join(missing_core))
 
     unexpected_placeholders: List[str] = []
     for source_name, path in sources.items():
@@ -398,11 +403,19 @@ def validate() -> None:
     validate_engineering_profiles()
     validate_references(rendered)
 
+    core_rendered = build_rendered_files(root, values, CORE_SOURCES)
+    if {item.source for item in core_rendered} != set(CORE_SOURCES):
+        fail("core preset rendered an unexpected source set")
+    validate_skills(core_rendered)
+    validate_routing_data(core_rendered)
+    validate_rule_ids(core_rendered)
+    validate_references(core_rendered)
+
     example_path = skill_root() / "examples" / "context.example.json"
     example_values, example_include = load_context(example_path)
     example_rendered = build_rendered_files(root, example_values, example_include)
-    if len(example_rendered) != len(rendered):
-        fail("example context does not render the complete default template")
+    if {item.source for item in example_rendered} != set(CORE_SOURCES):
+        fail("example context does not render the default core preset")
 
     version = template_version()
     if not SEMVER_PATTERN.fullmatch(version):
@@ -420,7 +433,7 @@ def validate() -> None:
     if pinned_actions != {"checkout", "setup-python"}:
         fail("CI actions must be present and pinned to full 40-character SHAs")
 
-    files_with_state = with_state_manifest(rendered, values, None)
+    files_with_state = with_state_manifest(core_rendered, values, CORE_SOURCES)
     with tempfile.TemporaryDirectory(prefix="codex-template-validation-") as temp:
         target = Path(temp) / "target"
         classifications = classify_files(target, files_with_state)
@@ -432,7 +445,8 @@ def validate() -> None:
             fail("second identical render is not stable")
 
     print(
-        f"validated {len(sources)} sources, {len(rendered)} rendered files, "
+        f"validated {len(sources)} sources, {len(core_rendered)} core and "
+        f"{len(rendered)} full rendered files, "
         f"{len(values)} placeholders, template version {version}"
     )
 

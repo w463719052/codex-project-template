@@ -1,7 +1,10 @@
 # Codex-first Workflow
 
-This is the canonical approval state machine. Other documents reference its
-rule IDs instead of restating the gate.
+This is the sole canonical definition of task classes, authorization, execution,
+scope expansion, verification, and handoff. `AGENTS.md` enforces entry into this
+workflow; `docs/CODEX_USAGE.md` gives examples; `docs/TASK_TEMPLATE.md` records
+task data; `docs/CHANGE_IMPACT.md` is the L3/L4 impact worksheet. Those documents
+reference this state machine instead of redefining it.
 
 ## 1. Investigate read-only
 
@@ -19,9 +22,11 @@ gaps, and observable completion criteria. Do not modify files or external state.
 
 ## 2. Classify and declare the scope
 
-Use `docs/TASK_TEMPLATE.md` and `docs/CHANGE_IMPACT.md`. Name every proposed
-file/module, behavior and contract change, verification command, non-goal, and
-known risk. For each command, cite its repository or CI evidence.
+Use `docs/TASK_TEMPLATE.md` when a durable task record is useful. L1/L2 record a
+concise impact summary there; L3/L4 complete `docs/CHANGE_IMPACT.md`. Name the
+files or directories required by the selected class, behavior and contract
+changes, verification commands, non-goals, and known risks. For each command,
+cite its repository or CI evidence.
 
 Apply the most conservative matching class:
 
@@ -57,10 +62,10 @@ change within those directories when they remain inside the approved behavior
 and protected exclusions. For L3/L4, wait for explicit approval of the exact
 plan and file set. Record the authorization source in the task contract.
 
-Allowed before approval: read files, inspect status/diffs/configuration, list or
-dry-run confirmed commands, and prepare the proposal. Not allowed: file writes,
-dependency installation, formatting that mutates files, external actions, or
-configuration changes.
+Before the selected class is authorized, read files, inspect
+status/diffs/configuration, list or dry-run confirmed commands, and prepare the
+declaration or proposal. Do not write files, install dependencies, run mutating
+formatters, perform external actions, or change configuration.
 
 ## 4. Execute the approved scope
 
@@ -105,9 +110,9 @@ private, binary, or unrelated files. Trace changed behavior through consumers
 and report changes, evidence, unverified items, and residual risk. If the same
 manual correction or explicit operator workflow choice is evidenced three times
 across locations or tasks, present a candidate using
-`docs/CODING_RULES_LOG.md` under `ADAPT-01`. Do not persist the observation or synchronize a
-rule until the user confirms it. Rule, tool, configuration, or historical-scope
-changes still require the applicable authorization gate.
+`docs/CODING_RULES_LOG.md` under `ADAPT-01`. Do not persist the observation or
+synchronize a rule until the user confirms it. Rule, tool, configuration, or
+historical-scope changes still require the applicable authorization gate.
 
 ## Parallel work
 

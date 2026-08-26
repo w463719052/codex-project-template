@@ -11,9 +11,9 @@
 ## Daily workflow
 
 ```text
-Classify the task with docs/TASK_TEMPLATE.md
+Describe the task using docs/TASK_TEMPLATE.md when a durable record is useful
                 ↓
-L1 declare and execute; L2 approve directories; L3/L4 approve exact scope
+Follow the classification and authorization in docs/CODEX_WORKFLOW.md
                 ↓
 Use a matching project skill or execute the scoped task
                 ↓
@@ -25,12 +25,9 @@ $code-review
 ### Feature
 
 ```text
-Classify this feature with docs/TASK_TEMPLATE.md and apply GATE-01. A direct
-implementation request authorizes only a declared, bounded L1 change. Use
-$context-discovery when affected files or consumers are not already known.
-For every changed source file, use the detected language profile in
-docs/CODING_STANDARDS.md. Stop under GATE-02 if implementation exceeds the
-approved scope.
+Implement this feature using docs/CODEX_WORKFLOW.md. Use $context-discovery
+when affected files or consumers are not already known, and apply the relevant
+profile from docs/CODING_STANDARDS.md to changed source files.
 ```
 
 ### Verification
@@ -50,11 +47,8 @@ Do not modify files.
 ### Repeated corrections and workflow choices
 
 ```text
-If the same manual edit, review correction, or explicit operator workflow choice
-is evidenced at least three times, present a candidate using
-docs/CODING_RULES_LOG.md. Do not record the behavior or synchronize rules until
-the user confirms it. Never infer preferences from silence or weaken protected
-verification, security, privacy, compatibility, or contract boundaries.
+Review recurring evidence under docs/CODEX_WORKFLOW.md and use
+docs/CODING_RULES_LOG.md to present any qualifying rule candidate.
 ```
 
 ## Project-specific commands

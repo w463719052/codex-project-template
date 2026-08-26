@@ -9,9 +9,7 @@
 - Approval reference or message:
 - Approved files/directories:
 - Approved operations:
-
-L1 may begin at `declared-L1` only when a direct implementation request and all
-L1 criteria are recorded. L2-L4 must not begin while status is `proposed`.
+- Authorization evidence required by `docs/CODEX_WORKFLOW.md`:
 
 ## Goal
 
@@ -57,10 +55,8 @@ L1 criteria are recorded. L2-L4 must not begin while status is `proposed`.
 - [ ] Tests/fixtures
 - [ ] Documentation
 
-For L1, confirm these categories are preserved with concise evidence. For L2,
-complete the applicable module impact. For L3/L4, identify every direct caller,
-downstream consumer, public contract, data/configuration path, test, and
-deployment or operational impact in `docs/CHANGE_IMPACT.md`.
+- L1/L2 impact summary:
+- L3/L4 `docs/CHANGE_IMPACT.md` record:
 
 ## Non-goals
 
@@ -83,19 +79,13 @@ deployment or operational impact in `docs/CHANGE_IMPACT.md`.
 - [ ] Tests:
 - [ ] No unrelated changes:
 
-## Scope-change triggers (`GATE-02`)
+## Scope control
 
-Stop and reclassify or request renewed approval before:
+- Current authorized boundary:
+- `GATE-02` trigger, if any:
+- Reclassification or renewed approval reference:
 
-- L1 touches an undeclared file or no longer meets every L1 condition;
-- L2 leaves an approved directory or changes behavior outside the approved scope;
-- L3/L4 touch an unlisted file or module;
-- changing a public API, schema, persistent data, or compatibility behavior;
-- adding/updating a dependency or lockfile;
-- changing build, CI, deployment, signing, secrets, or environment configuration;
-- creating a new cross-module dependency or shared library;
-- performing a destructive operation or external write;
-- expanding the task to unrelated cleanup or refactoring.
+Use only the triggers and procedure in `docs/CODEX_WORKFLOW.md`.
 
 ## Rule-adaptation observation
 
@@ -104,9 +94,7 @@ Stop and reclassify or request renewed approval before:
 - Threshold reached (at least three occurrences): yes / no
 - Candidate suggested to user: yes / no
 - User confirmed recording or synchronization: yes / no / pending
-
-Do not infer a preference from silence and do not write an observation or rule
-change until the user confirms it.
+- Applicable `ADAPT-01` decision reference:
 
 ## Verification commands
 

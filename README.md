@@ -99,6 +99,12 @@ $code-review
 批准范围需要时通过精确 `include` 或 `preset: "full"` 生成。状态清单记录最终解析后的
 源文件集合，便于安全升级。
 
+核心工作流文档采用单一职责：`AGENTS.md` 只提供强制规则和入口，
+`docs/CODEX_WORKFLOW.md` 是 L1–L4 与授权状态机的唯一完整定义，
+`docs/CODEX_USAGE.md` 只提供示例，`docs/TASK_TEMPLATE.md` 只记录任务字段，
+`docs/CHANGE_IMPACT.md` 仅作为 L3/L4 的完整影响分析表。Validator 会拒绝其他文档重新
+复制任务等级或越界流程。
+
 ## L1-L4 授权等级
 
 - **L1**：单模块、精确文件已知、保持公共契约/依赖/配置/数据/安全和外部状态不变。

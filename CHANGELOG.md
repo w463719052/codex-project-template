@@ -18,6 +18,9 @@ compatibility; repository commits remain the detailed source history.
 - Add a dependency-free paired real-task A/B analyzer for first-pass success,
   user round trips, elapsed time, optional token telemetry, scope escapes, and
   review defects without treating example data as performance evidence.
+- Make `CODEX_WORKFLOW.md` the sole full authorization state machine; reduce
+  `AGENTS.md`, usage, task-record, and change-impact templates to distinct
+  entrypoint, example, field-recording, and L3/L4 worksheet responsibilities.
 
 ## 1.3.0 - 2026-08-26
 

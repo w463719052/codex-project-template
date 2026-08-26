@@ -142,6 +142,14 @@ class RenderTemplateTests(unittest.TestCase):
         self.assertTrue(
             any(entry["target"] == "docs/CODEX_WORKFLOW.md" for entry in state["files"])
         )
+        workflow = (target / "docs" / "CODEX_WORKFLOW.md").read_text(encoding="utf-8")
+        self.assertIn("sole canonical definition", workflow)
+        for name in ("CODEX_USAGE.md", "TASK_TEMPLATE.md", "CHANGE_IMPACT.md"):
+            text = (target / "docs" / name).read_text(encoding="utf-8")
+            self.assertIn("docs/CODEX_WORKFLOW.md", text)
+            self.assertNotIn("**L1 —", text)
+        task = (target / "docs" / "TASK_TEMPLATE.md").read_text(encoding="utf-8")
+        self.assertNotIn("## Scope-change triggers", task)
 
     def test_full_preset_renders_optional_documents(self) -> None:
         context = self.write_context(preset="full")

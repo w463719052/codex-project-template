@@ -1,11 +1,10 @@
 # Change Impact Analysis
 
-Apply detail in proportion to the task class. L1 records concise evidence that
-contracts and protected boundaries are unchanged. L2 completes applicable
-module and directory impacts. L3/L4 complete every section before
-implementation. Write `none` with evidence instead of silently skipping a
-category. A newly discovered impact outside the class boundary triggers
-reclassification or renewed approval.
+Use this worksheet for L3/L4 tasks. L1/L2 record their concise impact summary in
+`docs/TASK_TEMPLATE.md`; if investigation requires this full worksheet,
+reclassify under `docs/CODEX_WORKFLOW.md` before implementation. For L3/L4,
+complete every applicable field and write `none` with evidence instead of
+silently skipping a category.
 
 ## Change surface
 
@@ -48,7 +47,7 @@ downstream.
 
 ## Scope decision
 
-- [ ] L1 files, L2 directories, or L3/L4 exact scope remain authorized.
+- [ ] Exact L3/L4 files and modules remain authorized.
 - [ ] Public contract and compatibility changes are explicitly approved.
 - [ ] New dependencies/configuration/external actions are explicitly approved.
 - [ ] Verification covers direct behavior and applicable consumers.

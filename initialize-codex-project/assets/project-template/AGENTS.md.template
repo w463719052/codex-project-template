@@ -20,13 +20,9 @@ choose a rule from an inferred timestamp.
 
 ## Mandatory rules
 
-- `GATE-01`: classify the task before editing. A direct implementation request
-  authorizes a declared L1 change; L2 requires one approved directory-boundary
-  plan; L3/L4 require explicit approval of the exact plan and file set.
-- `GATE-02`: stop when the selected class boundary fails. L1 reclassifies on
-  any unexpected scope; L2 stops before leaving approved directories; every
-  class stops before an unapproved dependency, build/CI/config change, public
-  contract/schema, destructive operation, or external action.
+- `GATE-01` and `GATE-02`: use the task classes, authorization gates, protected
+  boundaries, and scope-change procedure defined only in
+  `docs/CODEX_WORKFLOW.md`; do not invent a local exception.
 - `WORKTREE-01`: preserve existing work; do not reset, clean, overwrite,
   commit, rewrite history, or reformat unrelated files.
 - `EVIDENCE-01`: use only verified project facts and commands. Record unknowns
@@ -39,9 +35,8 @@ choose a rule from an inferred timestamp.
 - `VERIFY-01`: select evidenced scope-relevant checks through
   `docs/VERIFICATION.md`; command selection never authorizes execution, and
   not-run never means pass.
-- `ADAPT-01`: after three evidenced explicit operator choices, suggest a rule
-  candidate; record or synchronize it only after confirmation, and never use
-  habits to weaken protected boundaries.
+- `ADAPT-01`: apply the evidence, confirmation, and protected-boundary rules in
+  `docs/CODEX_WORKFLOW.md` and `docs/CODING_RULES_LOG.md`.
 - For every new or materially changed source file, detect its language and apply
   the selected industry profile in `docs/CODING_STANDARDS.md`. Treat verified
   build, compatibility, security, privacy, and public-contract requirements as
@@ -50,16 +45,14 @@ choose a rule from an inferred timestamp.
 
   {{ARCHITECTURE_SUMMARY}}
 - Add or update tests in proportion to changed behavior.
-- Trace changed behavior through callers, consumers, contracts, data, config,
-  deployment, and documentation using `docs/CHANGE_IMPACT.md`.
-- Under `ADAPT-01`, when three evidenced operator choices or corrections suggest a durable rule,
-  present a rule-tuning candidate from `docs/CODING_RULES_LOG.md`. Never record
-  behavior or synchronize rules without explicit user confirmation.
+- Record concise L1/L2 impact in `docs/TASK_TEMPLATE.md`; use
+  `docs/CHANGE_IMPACT.md` for the full L3/L4 trace.
 - Finish with `git diff --check`, relevant diff/status review, and a report of unverified items and residual risk.
 
 ## Workflow entrypoints
 
-- New feature or fix: classify it with `docs/TASK_TEMPLATE.md`, then follow `docs/CODEX_WORKFLOW.md`.
+- New feature or fix: follow `docs/CODEX_WORKFLOW.md`; use
+  `docs/TASK_TEMPLATE.md` when a durable task record is useful.
 - Large or unfamiliar task: use `$context-discovery` before proposing scope.
 - Build and test: use `$build-and-test` or follow `docs/VERIFICATION.md`.
 - Review: use `$code-review`; a review-only request does not authorize fixes.

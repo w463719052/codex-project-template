@@ -95,6 +95,13 @@ RULE_IDS = {
     "VERIFY-01",
     "ADAPT-01",
 }
+WORKFLOW_CLASS_MARKERS = ("**L1 —", "**L2 —", "**L3 —", "**L4 —")
+WORKFLOW_REFERENCE_TARGETS = (
+    "AGENTS.md",
+    "docs/CODEX_USAGE.md",
+    "docs/TASK_TEMPLATE.md",
+    "docs/CHANGE_IMPACT.md",
+)
 
 
 def fail(message: str) -> None:
@@ -287,6 +294,31 @@ def validate_rule_ids(rendered: Sequence[RenderedFile]) -> None:
         fail("repository AGENTS.md is missing rule IDs: " + ", ".join(missing_root))
 
 
+def validate_workflow_authority(rendered: Sequence[RenderedFile]) -> None:
+    by_target = {item.target.as_posix(): item for item in rendered}
+    workflow = by_target["docs/CODEX_WORKFLOW.md"].content.decode("utf-8")
+    for marker in WORKFLOW_CLASS_MARKERS:
+        if workflow.count(marker) != 1:
+            fail(f"canonical workflow must define {marker} exactly once")
+    if "sole canonical definition" not in workflow:
+        fail("workflow does not declare canonical ownership")
+
+    for target in WORKFLOW_REFERENCE_TARGETS:
+        text = by_target[target].content.decode("utf-8")
+        if "docs/CODEX_WORKFLOW.md" not in text:
+            fail(f"{target} does not reference the canonical workflow")
+        duplicated = [marker for marker in WORKFLOW_CLASS_MARKERS if marker in text]
+        if duplicated:
+            fail(f"{target} duplicates canonical task-class definitions")
+
+    task_template = by_target["docs/TASK_TEMPLATE.md"].content.decode("utf-8")
+    if "## Scope-change triggers" in task_template:
+        fail("task template duplicates the canonical scope-change procedure")
+    change_impact = by_target["docs/CHANGE_IMPACT.md"].content.decode("utf-8")
+    if "worksheet for L3/L4 tasks" not in change_impact:
+        fail("change-impact worksheet is not scoped to L3/L4")
+
+
 def validate_initializer_skill() -> None:
     path = skill_root() / "SKILL.md"
     frontmatter = parse_frontmatter(path.read_text(encoding="utf-8"), str(path))
@@ -399,6 +431,7 @@ def validate() -> None:
     validate_skills(rendered)
     validate_routing_data(rendered)
     validate_rule_ids(rendered)
+    validate_workflow_authority(rendered)
     validate_initializer_skill()
     validate_engineering_profiles()
     validate_references(rendered)
@@ -409,6 +442,7 @@ def validate() -> None:
     validate_skills(core_rendered)
     validate_routing_data(core_rendered)
     validate_rule_ids(core_rendered)
+    validate_workflow_authority(core_rendered)
     validate_references(core_rendered)
 
     example_path = skill_root() / "examples" / "context.example.json"

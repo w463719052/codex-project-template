@@ -61,5 +61,5 @@ selected language profiles and their linked primary sources.
 - Prefer formatter, linter, compiler, static analysis, templates, and tests for
   mechanical rules. Keep contextual design decisions in reviewable prose.
 - If the same manual correction appears in at least three places or recurs
-  across tasks, record it in `docs/CODING_RULES_LOG.md` and propose replacing
-  the repeated work with an approved rule or automated check.
+  across tasks, present a candidate in conversation. Record it only after confirmation, using
+  an optional rules log, and propose an approved rule or automated check.

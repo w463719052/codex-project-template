@@ -5,8 +5,9 @@ description: Review {{PROJECT_NAME}} changes for correctness, regressions, proje
 
 # Code Review
 
-Establish the requested baseline. Read `AGENTS.md`, the authorized task contract,
-`docs/CHANGE_IMPACT.md`, and only the relevant authority documents. Inspect
+Establish the requested baseline. Read `AGENTS.md`, the authorized scope from
+the conversation or operator-provided input, and only relevant authority documents.
+Use an impact worksheet only when needed; routine reviews do not require one. Inspect
 starting status before the diff so existing work is not misattributed. Review
 tracked, staged, and relevant untracked changes.
 
@@ -16,7 +17,8 @@ Treat verified compiler, build, CI, security/privacy, compatibility, and public-
 contract requirements as hard constraints. Existing local conventions remain
 compatibility evidence but do not automatically override the industry baseline.
 
-Check whether `.agents/ai/project-map.json` and
+When the diff changes mapped boundaries or commands, check whether
+`.agents/ai/project-map.json` and
 `.agents/ai/verification-routes.json` remain synchronized with changed module
 boundaries, public contracts, generated paths, and verification commands.
 
@@ -33,8 +35,8 @@ against the selected profile. Ignore purely subjective taste that is unsupported
 by the profile, project evidence, or a concrete readability/maintenance impact.
 
 Identify substantially repeated manual edits, review corrections, or explicit
-operator workflow choices. At three or more evidenced occurrences, report a
-`docs/CODING_RULES_LOG.md` candidate with scope, examples, replacement, conflicts,
+operator workflow choices. At three or more evidenced occurrences, report a candidate in conversation; optional
+`docs/CODING_RULES_LOG.md` supplies its structure with scope, examples, replacement, conflicts,
 benefits, risks, synchronization files, and the best enforcement route.
 Review-only work does not authorize recording, rule synchronization, tool
 changes, or historical migration. Never infer preference from silence.
@@ -50,3 +52,5 @@ unless asked; a review-only request never authorizes fixes. If there are no
 findings, state reviewed scope, consumer/contract coverage, tests observed or
 not run, and residual risks. Repository rules supplement rather than replace
 deterministic tests, linters, and required approvals.
+
+<!-- optional-reference: docs/CODING_RULES_LOG.md -->

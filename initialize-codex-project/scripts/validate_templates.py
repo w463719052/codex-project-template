@@ -12,8 +12,11 @@ from pathlib import Path
 from types import ModuleType
 from typing import Any, Dict, List, Mapping, Sequence
 
+from render_validation import validate_rendered, ValidationError
+
 from render_template import (
     CORE_SOURCES,
+    MINIMAL_SOURCES,
     PLACEHOLDER_PATTERN,
     STATE_PATH,
     RenderError,
@@ -56,6 +59,7 @@ EXPECTED_SOURCES = {
     "skills/code-review/SKILL.md.template",
     "skills/context-discovery/SKILL.md.template",
     "skills/context-discovery/scripts/build_context_pack.py",
+    "skills/context-discovery/scripts/audit_evidence.py",
 }
 EXPECTED_ENGINEERING_PROFILE_REFERENCES = {
     "BASELINE.md",
@@ -226,7 +230,7 @@ def parse_frontmatter(text: str, source_name: str) -> Mapping[str, str]:
     return result
 
 
-def validate_skills(rendered: Sequence[RenderedFile]) -> None:
+def validate_skills(rendered: Sequence[RenderedFile], expected_count: int = 3) -> None:
     skill_count = 0
     for item in rendered:
         target = item.target
@@ -250,8 +254,8 @@ def validate_skills(rendered: Sequence[RenderedFile]) -> None:
             fail(f"skill description is empty: {item.source}")
         if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", folder_name):
             fail(f"invalid skill folder name: {folder_name}")
-    if skill_count != 3:
-        fail(f"expected 3 baseline skills, found {skill_count}")
+    if skill_count != expected_count:
+        fail(f"expected {expected_count} baseline skills, found {skill_count}")
 
 
 def validate_routing_data(rendered: Sequence[RenderedFile]) -> None:
@@ -304,6 +308,8 @@ def validate_workflow_authority(rendered: Sequence[RenderedFile]) -> None:
         fail("workflow does not declare canonical ownership")
 
     for target in WORKFLOW_REFERENCE_TARGETS:
+        if target not in by_target:
+            continue
         text = by_target[target].content.decode("utf-8")
         if "docs/CODEX_WORKFLOW.md" not in text:
             fail(f"{target} does not reference the canonical workflow")
@@ -311,12 +317,29 @@ def validate_workflow_authority(rendered: Sequence[RenderedFile]) -> None:
         if duplicated:
             fail(f"{target} duplicates canonical task-class definitions")
 
-    task_template = by_target["docs/TASK_TEMPLATE.md"].content.decode("utf-8")
-    if "## Scope-change triggers" in task_template:
-        fail("task template duplicates the canonical scope-change procedure")
-    change_impact = by_target["docs/CHANGE_IMPACT.md"].content.decode("utf-8")
-    if "worksheet for L3/L4 tasks" not in change_impact:
-        fail("change-impact worksheet is not scoped to L3/L4")
+    if "docs/TASK_TEMPLATE.md" in by_target:
+        task_template = by_target["docs/TASK_TEMPLATE.md"].content.decode("utf-8")
+        if "## Scope-change triggers" in task_template:
+            fail("task template duplicates the canonical scope-change procedure")
+    if "docs/CHANGE_IMPACT.md" in by_target:
+        change_impact = by_target["docs/CHANGE_IMPACT.md"].content.decode("utf-8")
+        if "worksheet for L3/L4 tasks" not in change_impact:
+            fail("change-impact worksheet is not scoped to L3/L4")
+
+
+def validate_default_guidance_size(rendered: Sequence[RenderedFile]) -> Dict[str, int]:
+    """Guard fixed synthetic sample growth, never constrain target rendering."""
+    by_target = {item.target.as_posix(): item for item in rendered}
+    entrypoint = by_target.get("AGENTS.md")
+    if entrypoint is None:
+        fail("default guidance sample is missing AGENTS.md")
+    lines = len(entrypoint.content.decode("utf-8").splitlines())
+    total_bytes = sum(len(item.content) for item in rendered if item.target.suffix == ".md")
+    if lines > 60:
+        fail(f"fixed sample AGENTS.md exceeds 60 lines: {lines}")
+    if total_bytes > 10000:
+        fail(f"fixed sample default guidance exceeds 10000 bytes: {total_bytes}")
+    return {"entrypoint_lines": lines, "guidance_bytes": total_bytes}
 
 
 def validate_initializer_skill() -> None:
@@ -371,22 +394,10 @@ def validate_engineering_profiles() -> None:
 
 
 def validate_references(rendered: Sequence[RenderedFile]) -> None:
-    targets = {item.target.as_posix() for item in rendered}
-    for item in rendered:
-        if not item.target.as_posix().endswith(".md"):
-            continue
-        text = item.content.decode("utf-8")
-        for match in BACKTICK_PATH_PATTERN.finditer(text):
-            reference = match.group(1)
-            if "<" in reference or ">" in reference or "$" in reference:
-                continue
-            if reference.endswith("/"):
-                continue
-            is_generated_directory = any(
-                target.startswith(reference.rstrip("/") + "/") for target in targets
-            )
-            if reference not in targets and not is_generated_directory:
-                fail(f"broken generated reference in {item.target}: {reference}")
+    try:
+        validate_rendered(rendered, source_root())
+    except ValidationError as exc:
+        raise RenderError(str(exc)) from exc
 
 
 def validate() -> None:
@@ -445,11 +456,18 @@ def validate() -> None:
     validate_workflow_authority(core_rendered)
     validate_references(core_rendered)
 
+    minimal_rendered = build_rendered_files(root, values, MINIMAL_SOURCES)
+    validate_skills(minimal_rendered, expected_count=0)
+    validate_rule_ids(minimal_rendered)
+    validate_workflow_authority(minimal_rendered)
+    validate_references(minimal_rendered)
+    guidance_size = validate_default_guidance_size(minimal_rendered)
+
     example_path = skill_root() / "examples" / "context.example.json"
     example_values, example_include = load_context(example_path)
     example_rendered = build_rendered_files(root, example_values, example_include)
-    if {item.source for item in example_rendered} != set(CORE_SOURCES):
-        fail("example context does not render the default core preset")
+    if {item.source for item in example_rendered} != set(MINIMAL_SOURCES):
+        fail("example context does not render the default minimal preset")
 
     version = template_version()
     if not SEMVER_PATTERN.fullmatch(version):
@@ -469,7 +487,7 @@ def validate() -> None:
 
     files_with_state = with_state_manifest(core_rendered, values, CORE_SOURCES)
     with tempfile.TemporaryDirectory(prefix="codex-template-validation-") as temp:
-        target = Path(temp) / "target"
+        target = Path(temp).resolve() / "target"
         classifications = classify_files(target, files_with_state)
         if any(status != "create" for status, _ in classifications):
             fail("clean render did not classify every target as create")
@@ -479,9 +497,11 @@ def validate() -> None:
             fail("second identical render is not stable")
 
     print(
-        f"validated {len(sources)} sources, {len(core_rendered)} core and "
+        f"validated {len(sources)} sources, {len(minimal_rendered)} minimal, {len(core_rendered)} core and "
         f"{len(rendered)} full rendered files, "
-        f"{len(values)} placeholders, template version {version}"
+        f"{len(values)} placeholders, template version {version}; "
+        f"fixed sample {guidance_size['entrypoint_lines']} entrypoint lines, "
+        f"{guidance_size['guidance_bytes']} guidance bytes"
     )
 
 

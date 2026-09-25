@@ -7,49 +7,93 @@
         "task_type": "workflow-upgrade"
       },
       "expected": {
-        "command_ids": ["template-validator", "unit-tests", "routing-benchmark", "diff-check"],
-        "context_route_ids": ["workflow-upgrade"],
+        "command_ids": [
+          "template-validator",
+          "unit-tests",
+          "routing-benchmark",
+          "diff-check"
+        ],
+        "context_route_ids": [
+          "workflow-upgrade"
+        ],
         "max_bytes": 90000,
         "max_files": 10,
-        "module_ids": ["initializer", "template-assets"],
-        "verification_route_ids": ["template-assets"]
+        "module_ids": [
+          "initializer",
+          "template-assets"
+        ],
+        "verification_route_ids": [
+          "template-assets"
+        ]
       },
       "id": "workflow-template-change",
-      "verification_changed_files": ["initialize-codex-project/assets/project-template/docs/CODEX_WORKFLOW.md"]
+      "verification_changed_files": [
+        "initialize-codex-project/assets/project-template/docs/CODEX_WORKFLOW.md"
+      ]
     },
     {
       "context": {
-        "changed_files": ["initialize-codex-project/scripts/render_template.py"],
+        "changed_files": [
+          "initialize-codex-project/scripts/render_template.py"
+        ],
         "module_ids": [],
         "task_type": null
       },
       "expected": {
-        "command_ids": ["unit-tests", "template-validator", "routing-benchmark", "diff-check"],
-        "context_route_ids": ["tooling-change"],
+        "command_ids": [
+          "unit-tests",
+          "template-validator",
+          "ab-study-example",
+          "routing-benchmark",
+          "diff-check"
+        ],
+        "context_route_ids": [
+          "tooling-change"
+        ],
         "max_bytes": 90000,
         "max_files": 10,
-        "module_ids": ["tooling"],
-        "verification_route_ids": ["tooling"]
+        "module_ids": [
+          "tooling"
+        ],
+        "verification_route_ids": [
+          "tooling"
+        ]
       },
       "id": "renderer-change",
-      "verification_changed_files": ["initialize-codex-project/scripts/render_template.py"]
+      "verification_changed_files": [
+        "initialize-codex-project/scripts/render_template.py"
+      ]
     },
     {
       "context": {
-        "changed_files": ["README.md"],
+        "changed_files": [
+          "README.md"
+        ],
         "module_ids": [],
         "task_type": "documentation"
       },
       "expected": {
-        "command_ids": ["template-validator", "routing-benchmark", "diff-check"],
-        "context_route_ids": ["documentation"],
+        "command_ids": [
+          "template-validator",
+          "routing-benchmark",
+          "diff-check"
+        ],
+        "context_route_ids": [
+          "documentation"
+        ],
         "max_bytes": 90000,
         "max_files": 10,
-        "module_ids": ["governance"],
-        "verification_route_ids": ["governance-docs"]
+        "module_ids": [
+          "governance"
+        ],
+        "verification_route_ids": [
+          "governance-docs"
+        ]
       },
       "id": "operator-documentation",
-      "verification_changed_files": ["README.md"]
+      "verification_changed_files": [
+        "README.md"
+      ]
     }
   ],
   "schema_version": 1

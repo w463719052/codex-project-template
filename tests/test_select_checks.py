@@ -58,6 +58,15 @@ class SelectChecksTests(unittest.TestCase):
         with self.assertRaisesRegex(MODULE.CheckSelectionError, "unknown commands"):
             MODULE.select_checks(routes, ["src/core.py"])
 
+    def test_optional_provenance_survives_selection(self):
+        provenance = [{"path": "build.json", "scope": "core", "environment": "local", "prerequisites": ["tool available"]}]
+        self.routes["commands"][0]["provenance"] = provenance
+        result = MODULE.select_checks(self.routes, ["src/core.py"])
+        self.assertEqual(result["commands"][0]["provenance"], provenance)
+        self.routes["commands"][0]["provenance"] = [{"path": "build.json", "sha256": "invalid"}]
+        with self.assertRaisesRegex(MODULE.CheckSelectionError, "sha256"):
+            MODULE.select_checks(self.routes, ["src/core.py"])
+
 
 if __name__ == "__main__":
     unittest.main()

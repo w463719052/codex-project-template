@@ -1,251 +1,171 @@
 # Codex Project Template
 
-面向真实代码仓库的 Codex-first 工程治理模板。它先以只读方式调查目标项目，再生成
-有证据来源的 AI 约束、审批工作流、模块边界、编码规范路由、变更影响分析、验证规范
-和基础 skills。对新增和实质修改的代码，它会按检测到的语言选择经过核验的行业工程
-基线，同时分析目标项目已有约束和机械检查。
+为项目生成少量、可维护的 Codex 指导。默认只写四份指导文件；已有项目的规则和业务事实
+从实际仓库取证，不套用其他项目的定制。
 
-当前模板版本：`2.0.0`。
+当前模板版本：`3.0.1`。
 
-## 核心原则
-
-- **按风险授权**：L1 直接声明后执行，L2 一次批准目录边界，L3/L4 批准精确计划。
-- **按等级控制越界**：L1 范围失效即升级，L2 离开批准目录即停止，保护边界始终重批。
-- **证据优先**：不猜测目标项目的架构、命令、语言、框架或产品规则。
-- **行业基线优先**：新增和实质修改的代码使用对应语言的权威工程规范；已有规则作为
-  兼容证据，强制构建、契约、安全和平台要求仍是硬边界。
-- **规范持续演进**：同类人工修正达到三处或跨任务重复时，记录候选并优先转成经过
-  批准的规则、formatter、linter、静态检查、模板、生成器或测试。
-- **习惯驱动建议**：同类明确使用行为出现至少三次时提醒可调整的规则，经使用者确认
-  后再记录和同步；不从沉默推断偏好，也不静默削弱安全与验证边界。
-- **防止回归**：从变更点追踪调用方、消费者、契约、数据、配置和部署影响。
-- **模块化演进**：明确模块职责和依赖方向，公共库抽取必须通过稳定性和文档门禁。
-- **有界上下文**：用机器可读模块图和上下文路由限制首轮文件与字节量，只按证据扩展。
-- **精准验证**：按变更路径选择有出处的检查；选择结果不等于命令执行授权。
-- **软硬结合**：`AGENTS.md` 与 skills 负责上下文规则；格式化、静态检查、测试、CI、
-  hooks、审批和沙箱负责可机械执行的边界。
-
-## 安装
-
-推荐把 `initialize-codex-project` 目录链接到用户级 skills：
+## 默认生成什么
 
 ```text
-$HOME/.agents/skills/initialize-codex-project
-    → <本仓库>/initialize-codex-project
+AGENTS.md                      简短入口、项目路径与必要约束
+ docs/CODEX_WORKFLOW.md         范围、授权与交付流程
+ docs/CODING_STANDARDS.md       适用语言规范与项目约束
+ docs/VERIFICATION.md           已验证命令与使用条件
+ docs/CODEX_TEMPLATE_STATE.json 自动状态清单，供需要时检查升级
 ```
 
-Codex 支持 symlinked skill 目录。安装后，在目标 Git 仓库中开始新任务并输入：
+日常直接描述任务即可。Codex 按范围读取工作流；改源码时读适用标准，验证时读相关命令。
+无需填写任务表、维护路由 JSON、记录指纹或依次调用多个 skills，也不应每轮读取所有文档。
 
-```text
-使用 $initialize-codex-project。
+默认不生成项目地图、验证路由、项目级 skills、规则日志或任务模板。保留 L1–L4 授权边界、
+已有工作保护、基于证据的命令选择与真实验证结果。指导无法替代项目已有的编译器、测试和 CI。
 
-只读调查当前仓库并提出 Codex-first 工作流初始化方案。
-识别模块、入口、公共契约、消费者、测试、构建命令和生成目录。
-按文件和构建证据选择适用的语言工程规范，并报告与现有规则的冲突。
-先报告证据、缺口、拟创建或合并的文件、影响、风险和验证。
-在我批准精确文件清单前不要修改。
+## 内容如何控制
+
+这些要求由通用模板和初始化 skill 执行，不依赖后续自动学习：
+
+- 入口只放关键路径、硬约束及阅读入口，以生成后 60 行以内为审查目标；优先引用已有说明。
+- 编码规则说明适用范围及影响的决策；引用工具配置，保留必要行业基线摘要、兼容限制和
+  有证据的易错约定，避免复制整篇规范。
+- 每条命令关联触发改动、出处、前提、副作用及预期结果；验证矩阵说明何时扩大检查。
+- 同一任务复用仍可用且未变的指导与授权；规则变化、新模块/边界、证据冲突或上下文丢失时，
+  重读必要部分。不能跳过新约束，也不承诺控制客户端重复注入。
+
+初始化完成前检查这些内容，报告实际入口行数和缺口，不要求每日打卡。仓库校验用固定的
+合成占位值检查默认指导总计不超过 10,000 字节、入口不超过 60 行，防止模板无意膨胀。
+真实项目的必要事实优先，不硬截断，也不把静态体积等同于 token 或质量收益。
+
+通用模板定义行为，初始化采集项目事实，后续根据证据和授权调整；没有后台学习、未经确认
+的偏好持久化或从项目自动回写通用模板。
+
+## 安装与初始化
+
+将 `initialize-codex-project` 链接到用户级 skills（已有同名目录时先检查，不要覆盖）：
+
+```sh
+ln -s /absolute/path/codex-project-template/initialize-codex-project ~/.codex/skills/initialize-codex-project
 ```
 
-## 强制工作流
+在目标项目中调用：
 
 ```text
-任务分级与只读调查
-   ↓
-L1 声明 / L2 目录方案 / L3-L4 精确方案
-   ↓
-匹配等级的授权
-   ↓
-按批准范围实施
-   ↓
-发现越界则停止并重新批准
-   ↓
-$build-and-test
-   ↓
-$code-review
+$initialize-codex-project 根据实际项目初始化轻量指导，先给出文件清单。
 ```
 
-## 默认核心产物
+初始化会检查已有指导、相关源码/构建证据和工作区状态，只收集所选产物需要的字段。
+语言规范来自经过核验的行业基线，并保留目标的构建、兼容、安全、隐私和公共契约约束。
+不明确的事实记录为文档缺口，不猜测命令或复制其他项目的偏好。
 
-省略选择参数时使用 `core` preset，只生成日常 AI 编码所需的核心文件：
+## 渲染与配置
 
-```text
-<target-repository>/
-├── AGENTS.md
-├── .agents/
-│   ├── ai/
-│   │   ├── project-map.json
-│   │   └── verification-routes.json
-│   └── skills/
-│       ├── build-and-test/
-│       │   ├── SKILL.md
-│       │   └── scripts/select_checks.py
-│       ├── code-review/SKILL.md
-│       └── context-discovery/
-│           ├── SKILL.md
-│           └── scripts/build_context_pack.py
-├── docs/
-│   ├── AI_CONTEXT_STRATEGY.md
-│   ├── CHANGE_IMPACT.md
-│   ├── CODEX_TEMPLATE_STATE.json
-│   ├── CODEX_USAGE.md
-│   ├── CODEX_WORKFLOW.md
-│   ├── CODING_RULES_LOG.md
-│   ├── CODING_STANDARDS.md
-│   ├── TASK_TEMPLATE.md
-│   └── VERIFICATION.md
+[示例上下文](initialize-codex-project/examples/context.example.json)只展示轻量默认所需字段。
+替换为实际项目证据后先 dry-run，审查并批准完整输出清单，再写入：
+
+```sh
+python3 -B initialize-codex-project/scripts/render_template.py --context <context.json> --target <target-repository> --dry-run
+python3 -B initialize-codex-project/scripts/render_template.py --context <context.json> --target <target-repository> --write
 ```
 
-架构、模块图、ADR、共享库、性能预算和 skill 设计文档是可选产物，只在目标证据和
-批准范围需要时通过精确 `include` 或 `preset: "full"` 生成。状态清单记录最终解析后的
-源文件集合，便于安全升级。
+| 选择 | 生成模板文件数（另加一个状态清单） | 适用情况 |
+| --- | ---: | --- |
+| 省略 `preset` 或 `minimal` | 4 | 普通项目默认 |
+| 显式 `core` | 17 | 需要维护模块/验证路由及三个项目级 skills |
+| 显式 `full` | 24 | 所有架构、共享库等扩展均确有需要 |
+| `include` | 按清单 | 精确选择，必须满足引用和脚本依赖 |
 
-核心工作流文档采用单一职责：`AGENTS.md` 只提供强制规则和入口，
-`docs/CODEX_WORKFLOW.md` 是 L1–L4 与授权状态机的唯一完整定义，
-`docs/CODEX_USAGE.md` 只提供示例，`docs/TASK_TEMPLATE.md` 只记录任务字段，
-`docs/CHANGE_IMPACT.md` 仅作为 L3/L4 的完整影响分析表。Validator 会拒绝其他文档重新
-复制任务等级或越界流程。
+`preset` 与 `include` 互斥，不需要新增开关。`values` 只需提供所选模板的占位符；仍接受
+旧上下文中已知但未使用的值。新增项目特定规则由目标项目自行维护。
 
-## L1-L4 授权等级
+**3.0.0 兼容变化：省略 preset 不再生成 core；minimal 也由 13 份缩减为 4 份。**
+需要原 core 文件集合的调用方请显式指定 `"preset": "core"`。core/full 的文件集合保留，
+共用指导文本已精简。已有目标文件不会自动删除、覆盖或迁移。
 
-- **L1**：单模块、精确文件已知、保持公共契约/依赖/配置/数据/安全和外部状态不变。
-  使用者明确要求实现、修复或修改即构成授权；AI 先简述范围和检查，然后直接执行。
-- **L2**：模块内功能或调试，文件可能在已知目录内变化。使用者一次批准目录边界后，
-  不因同目录新增文件重复确认。
-- **L3**：跨模块、兼容、并发、数据流或公共契约敏感变更，批准精确文件和影响方案。
-- **L4**：架构、安全隐私、迁移、破坏性/外部操作或高成本失败任务，保留完整影响、
-  回滚和所有者证据门禁。
+渲染器验证实际 JSON schema、占位符、必需引用与脚本依赖；缺失依赖会拒绝生成。
+条件使用的扩展引用以 `<!-- optional-reference: docs/FILE.md -->` 等标记声明，不能用来
+隐藏实际必需依赖。源文件 `.template` 后缀被移除；`skills/` 输出到 `.agents/skills/`。
 
-判断不确定时使用更高等级。依赖、构建/CI/配置、公共 API/schema、外部写入和破坏性
-操作不会因为任务看起来很小而降为 L1/L2。
+同名非一致内容会阻止写入。安全写入使用 POSIX 目录句柄、拒绝符号链接和独占创建；失败时
+只回滚本次创建且身份未变的对象，清理不完整会报错。它不是文件系统事务，不承诺抵御
+进程强杀或任意并发重命名。状态清单保存版本与哈希，不保存上下文原文。
 
-目标仓库没有权威产品或架构规范时，模板会记录清晰的 documentation gap，等待责任人
-决策。编码规范会从目标语言证据选择经过核验的行业基线，但 formatter、linter、编译器、
-CI、框架、兼容和项目例外仍必须从目标证据确认。
+## 授权与任务记录
 
-## 语言工程规范
+L1 的明确实施请求授权已声明的局部范围；L2 需要一次目录边界方案批准；L3/L4 需要精确
+方案批准，L4 另需回滚与运行影响证据。超出批准边界时重新确认。完整定义在生成的工作流中。
+同一范围内有效的检查授权持续有效，不重复索取。
 
-初始化器通过只读路径元数据选择 Swift、Objective-C、Kotlin、Java、TypeScript/
-JavaScript、Web Frontend、Python、Go、Rust、C 或 C++ profile。Web Frontend 覆盖
-HTML/CSS、Sass/Less、JSX/TSX、Vue、Svelte、Astro 及常见前端构建标记。规则来源记录在
-`initialize-codex-project/references/engineering-standards/catalog.json`，语言歧义会报告为
-候选而不是强行选择。selector 不读取业务源码，不执行命令，也不修改目标仓库：
+范围、影响和结果默认在对话中说明。三次有证据的重复选择可触发规则建议，确认后才记录；
+不自动建立偏好档案、任务日志或扩展配置。
 
-```text
-python3 -B initialize-codex-project/scripts/select_language_profiles.py \
-  --project-root <target-repository>
+## 按需扩展
+
+显式选择 core/full 时，才生成以下维护能力：
+
+- `.agents/ai/project-map.json`：模块、路径、契约、预算及发现路由。
+- `.agents/ai/verification-routes.json`：有证据的验证命令及路径匹配。
+- `.agents/skills/`：context-discovery、build-and-test、code-review 及配套脚本。
+- 使用说明、任务输入模板、影响分析表和规则日志。
+
+full 另含架构、ADR、模块地图、共享库规范、性能预算及 skill 设计指导。
+精确 include 必须同时选择所需依赖。没有地图时直接按任务路径、调用者和测试做有界搜索；
+没有验证路由时直接从验证文档选择命令。安装扩展不等于每个任务都要使用。
+
+路由优先处理明确文件/模块提示，报告遗漏；泛化匹配涉及多个模块时返回 `scope_required`。
+命令选择固定返回 `execution_authorized: false`，不能替代执行授权。文件数与字节数是
+静态上下文指标，尚无真实模型评测证明某个 preset 普遍更省 token 或更准确。
+
+语言范围不明确时，可使用只读选择器；`--scope` 可重复，`--role` 为显式角色标签：
+
+```sh
+python3 -B initialize-codex-project/scripts/select_language_profiles.py --project-root <target-repository> --scope <relative-module> --role application
 ```
 
-生成后的 `docs/CODING_STANDARDS.md` 既包含所选语言规范，也记录目标项目已有工具、
-约束和冲突。行业基线指导新增及实质修改代码；冲突的工具配置和历史代码迁移需要
-单独批准，不能混入普通功能变更。
+## 需要维护或评测时
 
-当同一种人工修改或审查意见出现至少三次，或跨任务重复发生时，使用
-`docs/CODING_RULES_LOG.md` 记录证据、范围、替代规则、冲突、执行方式和决策。能机械
-检查的规则应优先转成工具或测试；替换规则、修改配置和批量迁移仍受审批门禁约束。
+以下工具不属于日常任务的必读或必跑流程。
 
-## 确定性渲染
+**证据审计：** 模块/命令可选 `provenance`，必填相对 `path`，可选 `sha256`、`verified_at`
+（YYYY-MM-DD）、`scope`、`environment`、`prerequisites`（字符串数组）。旧 schema 1 和
+字符串 `evidence` 保持兼容；不要求补齐指纹。安装相应扩展后，在目标项目运行：
 
-优先让 skill 完成调查和方案确认。对于全新且无冲突的文件，可使用内置渲染器：
-
-```text
-python3 -B initialize-codex-project/scripts/render_template.py \
-  --context initialize-codex-project/examples/context.example.json \
-  --target <target-repository> \
-  --dry-run
-
-python3 -B initialize-codex-project/scripts/render_template.py \
-  --context <approved-context.json> \
-  --target <target-repository> \
-  --write
+```sh
+python3 -B .agents/skills/context-discovery/scripts/audit_evidence.py --project-root .
 ```
 
-上下文由 `values`、可选 `preset` 和可选 `include` 组成。默认或
-`preset: "core"` 渲染核心文件；`preset: "full"` 渲染完整模板；`include` 精确渲染列出的
-模板源路径。`preset` 与 `include` 互斥。必须先审查 dry-run 输出并批准完整文件清单，
-才能运行 `--write`。
+可重复传入 `--metadata <相对JSON路径>`。current/stale/missing/unverified 分别表示字节匹配、
+变化、缺失和缺少指纹。退出码 0 无 stale/missing，1 有 stale/missing，2 输入/读取错误。
+它不执行命令、不更新元数据；哈希匹配不证明命令有效。
 
-渲染器具备以下安全性质：
+**升级报告：** 只读比较初始化基线与当前目标，可加入已核实的新上下文比较候选输出：
 
-- 不覆盖任何内容不同的目标文件；所有冲突在写入前统一失败。
-- `.template` 后缀会被移除，模板 `skills/` 会映射到目标 `.agents/skills/`。
-- 拒绝缺失、未知或畸形占位符以及不安全路径。
-- 生成 `docs/CODEX_TEMPLATE_STATE.json`，记录模板版本、上下文哈希、源/目标映射和
-  文件哈希，不记录上下文原文。
-- 对已存在的同名规则采用“只读比较 → 聚焦合并方案 → 重新批准”，不绕过冲突保护。
-- `_JSON` 结构化占位符只接受非空 JSON 对象/数组；生成后的路由文件会再次执行严格
-  JSON 与 schema 校验。
-
-## Token 与大型项目性能
-
-模板采用“路径/符号搜索 → 模块路由 → 有界 Context Pack → 证据触发扩展”，避免默认
-读取全仓库。`.agents/ai/project-map.json` 记录模块、入口、契约、消费者、测试、排除项和
-预算；`$context-discovery` 的脚本只输出候选路径、原因和字节数，不输出源码内容。
-
-`.agents/ai/verification-routes.json` 把变更路径映射到有出处的检查命令，
-`select_checks.py` 只给出候选列表，并固定返回 `execution_authorized: false`。这样可以减少
-无关检查和往返，但不会绕过任务授权。
-
-本仓库的 routing benchmark 使用文件数、字节数和命令数作为可重复代理指标；它们不
-等同于真实模型 token、费用或延迟。只有运行环境提供稳定遥测时才记录真实 token，并且
-任何优化都不能降低审批边界、正确性、安全、兼容、消费者覆盖或验证质量。
-
-对于真实效果，使用配对 A/B 记录比较同一任务、同一基础 revision、相同模型配置、
-环境和验收检查下的两个工作流。分析器比较首次通过率、使用者往返、耗时、可用 token、
-范围越界和 review 缺陷；缺失 token 保持缺失，不按零计算：
-
-```text
-python3 -B initialize-codex-project/scripts/analyze_ab_study.py \
-  --input <real-study.json>
+```sh
+python3 -B initialize-codex-project/scripts/report_upgrade.py --target <target-repository>
+python3 -B initialize-codex-project/scripts/report_upgrade.py --target <target-repository> --context <verified-context.json>
 ```
 
-仓库中的 example 只验证分析器，不构成性能证据，也不会自动启动模型会话。
+状态包括 unchanged、target-modified、template-changed、both-changed、missing、new、
+already-current、unmanaged-conflict、not-selected。not-selected 不代表删除。
+退出码 0 为报告成功，2 为输入/读取错误；不会自动合并、刷新哈希或写入目标。
+缺少旧内容时不能仅靠哈希声称安全三方合并。
 
-## 使用习惯与规则优化
+**真实评测：** 见 [A/B 协议](initialize-codex-project/references/ab-study-protocol.md)。
+使用独立配对研究比较 baseline/minimal 与 baseline/core，报告各指标有效样本数。
+合成样例只验证分析器，不代表实测效果；缺失 token 保持缺失，不启动模型会话。
 
-生成的 `docs/CODING_RULES_LOG.md` 同时记录编码和工作流规则候选。当相同的明确操作、
-纠正或批准模式有至少三条可引用证据时，AI 会在交付中提醒可调整规则，并列出证据、
-收益、风险和需要同步的文件。使用者确认前不会记录行为或修改规则；拒绝项可记录重新
-考虑条件，避免反复提醒。沉默、缺少证据或一次性选择都不能被当作长期偏好。
+## 本仓库验证与支持环境
 
-## 公共库原则
+Python 3.12+，无需第三方依赖。安全写入要求 macOS/Linux POSIX 目录句柄与 `O_NOFOLLOW`；
+不支持 Windows 写入。CI 配置覆盖 Ubuntu 24.04/macOS 14 和 Python 3.12/3.14；远程是否通过
+以实际运行记录为准。
 
-相似代码不等于共享抽象。公共库至少需要稳定且聚焦的职责、真实独立消费者、清晰
-公共 API、独立测试、消费者契约测试、版本/兼容/迁移策略以及完整使用文档。新库、
-包链接、仓库引用或生产依赖始终属于需要明确批准的范围扩张。
-
-若目标证据需要并选择了可选共享库产物，详细规则见生成后的
-`docs/SHARED_LIBRARY_STANDARD.md` 和 `docs/LIBRARY_DOCUMENTATION_TEMPLATE.md`。
-
-## 本仓库验证
-
-本项目不安装第三方 Python 依赖。提交前运行：
-
-```text
+```sh
 python3 -B initialize-codex-project/scripts/validate_templates.py
 python3 -B -m unittest discover -s tests -v
 python3 -B initialize-codex-project/scripts/benchmark_routing.py
-python3 -B initialize-codex-project/scripts/analyze_ab_study.py \
-  --input initialize-codex-project/benchmarks/ab-study.example.json
+python3 -B initialize-codex-project/scripts/analyze_ab_study.py --input initialize-codex-project/benchmarks/ab-study.example.json
 git diff --check
 git status --short
 ```
 
-验证覆盖模板清单、UTF-8、占位符、结构化 JSON/schema、语言 profile 目录与官方来源、
-选择器歧义处理、输出路径、内部引用、skill frontmatter、规则 ID、版本、路由预算、
-重复渲染稳定性、冲突拒绝和无部分写入。
-
-## 安全边界
-
-- initializer 默认只生成已批准的文档和 repository skills。
-- 不修改目标业务源码、依赖、CI、构建配置、Git 历史或外部系统。
-- 不安装工具来猜测命令，不执行未经批准的 mutating formatter。
-- 不覆盖已有 `AGENTS.md`、docs 或同名 skills。
-- 不把本模板项目或其他仓库的产品、架构和个性化决策带入目标项目；语言规则只来自
-  根据目标证据选中的、注明权威来源的行业 profile。
-- 目标项目的 CI、hooks、沙箱或命令规则只能在单独分析和批准后建立。
-
-## 升级策略
-
-生成的项目不会被本仓库自动修改。升级时读取目标项目中的
-`docs/CODEX_TEMPLATE_STATE.json`，比较版本和文件哈希，提出逐文件合并与迁移方案，
-获得批准后再更新。版本变化记录在 [CHANGELOG.md](CHANGELOG.md)。
+变更记录见 [CHANGELOG.md](CHANGELOG.md)。

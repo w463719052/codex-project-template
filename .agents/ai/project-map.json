@@ -20,12 +20,19 @@
         "initialize-codex-project/assets/project-template/docs/CODEX_WORKFLOW.md",
         "initialize-codex-project/assets/project-template/docs/CODING_STANDARDS.md.template"
       ],
-      "module_ids": ["initializer", "template-assets"],
-      "task_types": ["workflow-upgrade", "template-change"]
+      "module_ids": [
+        "initializer",
+        "template-assets"
+      ],
+      "task_types": [
+        "workflow-upgrade",
+        "template-change"
+      ]
     },
     {
       "expand_when": [
-        "A script contract, language-profile selection rule, or generated target mapping changes."
+        "A script contract, language-profile selection rule, or generated target mapping changes.",
+        "A safe-write helper, evidence audit, or upgrade-report contract is affected."
       ],
       "id": "tooling-change",
       "initial_paths": [
@@ -34,17 +41,36 @@
         "initialize-codex-project/scripts/select_language_profiles.py",
         "initialize-codex-project/scripts/validate_templates.py",
         "tests/test_language_profile_selection.py",
-        "tests/test_render_template.py"
+        "tests/test_render_template.py",
+        "initialize-codex-project/scripts/render_validation.py",
+        "initialize-codex-project/scripts/safe_paths.py",
+        "initialize-codex-project/scripts/report_upgrade.py"
       ],
-      "module_ids": ["tooling", "tests-ci"],
-      "task_types": ["tooling", "performance"]
+      "module_ids": [
+        "tooling",
+        "tests-ci"
+      ],
+      "task_types": [
+        "tooling",
+        "performance"
+      ]
     },
     {
-      "expand_when": ["Documentation changes alter a generated contract or command."],
+      "expand_when": [
+        "Documentation changes alter a generated contract or command."
+      ],
       "id": "documentation",
-      "initial_paths": ["README.md", "CHANGELOG.md", "AGENTS.md"],
-      "module_ids": ["governance"],
-      "task_types": ["documentation"]
+      "initial_paths": [
+        "README.md",
+        "CHANGELOG.md",
+        "AGENTS.md"
+      ],
+      "module_ids": [
+        "governance"
+      ],
+      "task_types": [
+        "documentation"
+      ]
     }
   ],
   "documentation_gaps": [],
@@ -56,10 +82,21 @@
   ],
   "modules": [
     {
-      "authority_docs": ["AGENTS.md", "README.md"],
-      "consumers": ["initializer", "template-assets", "tooling", "tests-ci"],
+      "authority_docs": [
+        "AGENTS.md",
+        "README.md"
+      ],
+      "consumers": [
+        "initializer",
+        "template-assets",
+        "tooling",
+        "tests-ci"
+      ],
       "dependencies": [],
-      "entrypoints": ["AGENTS.md", "README.md"],
+      "entrypoints": [
+        "AGENTS.md",
+        "README.md"
+      ],
       "generated_paths": [],
       "id": "governance",
       "paths": [
@@ -70,14 +107,25 @@
         ".gitignore",
         ".agents/ai/**"
       ],
-      "public_contracts": ["README.md", "CHANGELOG.md"],
+      "public_contracts": [
+        "README.md",
+        "CHANGELOG.md"
+      ],
       "responsibility": "Repository-wide authority, operator documentation, version history, and text-file conventions.",
       "tests": []
     },
     {
-      "authority_docs": ["AGENTS.md", "initialize-codex-project/SKILL.md"],
-      "consumers": ["template-assets", "tooling"],
-      "dependencies": ["governance"],
+      "authority_docs": [
+        "AGENTS.md",
+        "initialize-codex-project/SKILL.md"
+      ],
+      "consumers": [
+        "template-assets",
+        "tooling"
+      ],
+      "dependencies": [
+        "governance"
+      ],
       "entrypoints": [
         "initialize-codex-project/SKILL.md",
         "initialize-codex-project/agents/openai.yaml"
@@ -98,19 +146,35 @@
         "initialize-codex-project/references/engineering-standards/catalog.json"
       ],
       "responsibility": "Initializer workflow, language engineering profiles, discovery contract, invocation metadata, template version, and example context.",
-      "tests": ["tests/test_render_template.py"]
+      "tests": [
+        "tests/test_render_template.py"
+      ]
     },
     {
-      "authority_docs": ["AGENTS.md", "initialize-codex-project/SKILL.md"],
-      "consumers": ["initializer", "tooling", "tests-ci"],
-      "dependencies": ["governance", "initializer"],
+      "authority_docs": [
+        "AGENTS.md",
+        "initialize-codex-project/SKILL.md"
+      ],
+      "consumers": [
+        "initializer",
+        "tooling",
+        "tests-ci"
+      ],
+      "dependencies": [
+        "governance",
+        "initializer"
+      ],
       "entrypoints": [
         "initialize-codex-project/assets/project-template/AGENTS.md.template",
         "initialize-codex-project/assets/project-template/docs/CODEX_WORKFLOW.md"
       ],
-      "generated_paths": ["docs/CODEX_TEMPLATE_STATE.json"],
+      "generated_paths": [
+        "docs/CODEX_TEMPLATE_STATE.json"
+      ],
       "id": "template-assets",
-      "paths": ["initialize-codex-project/assets/project-template/**"],
+      "paths": [
+        "initialize-codex-project/assets/project-template/**"
+      ],
       "public_contracts": [
         "initialize-codex-project/assets/project-template/AGENTS.md.template",
         "initialize-codex-project/assets/project-template/docs/CODEX_WORKFLOW.md",
@@ -119,37 +183,72 @@
         "initialize-codex-project/assets/project-template/docs/VERIFICATION.md.template"
       ],
       "responsibility": "Files rendered into target repositories, including project guidance, documentation, and baseline skills.",
-      "tests": ["tests/test_render_template.py"]
+      "tests": [
+        "tests/test_render_template.py",
+        "tests/test_workflow_contracts.py",
+        "tests/test_context_pack.py",
+        "tests/test_select_checks.py",
+        "tests/test_evidence_audit.py"
+      ]
     },
     {
-      "authority_docs": ["AGENTS.md", "initialize-codex-project/SKILL.md"],
-      "consumers": ["initializer", "tests-ci"],
-      "dependencies": ["initializer", "template-assets"],
+      "authority_docs": [
+        "AGENTS.md",
+        "initialize-codex-project/SKILL.md"
+      ],
+      "consumers": [
+        "initializer",
+        "tests-ci"
+      ],
+      "dependencies": [
+        "initializer",
+        "template-assets"
+      ],
       "entrypoints": [
         "initialize-codex-project/scripts/render_template.py",
         "initialize-codex-project/scripts/select_language_profiles.py",
-        "initialize-codex-project/scripts/validate_templates.py"
+        "initialize-codex-project/scripts/validate_templates.py",
+        "initialize-codex-project/scripts/report_upgrade.py"
       ],
-      "generated_paths": ["docs/CODEX_TEMPLATE_STATE.json"],
+      "generated_paths": [
+        "docs/CODEX_TEMPLATE_STATE.json"
+      ],
       "id": "tooling",
-      "paths": ["initialize-codex-project/scripts/**"],
+      "paths": [
+        "initialize-codex-project/scripts/**"
+      ],
       "public_contracts": [
         "initialize-codex-project/scripts/render_template.py",
         "initialize-codex-project/scripts/analyze_ab_study.py",
-        "initialize-codex-project/scripts/select_language_profiles.py"
+        "initialize-codex-project/scripts/select_language_profiles.py",
+        "initialize-codex-project/scripts/report_upgrade.py"
       ],
-      "responsibility": "Dependency-free rendering, language-profile selection, validation, and routing benchmark tools.",
-      "tests": ["tests/test_render_template.py", "tests/test_ab_study.py"]
+      "responsibility": "Dependency-free safe rendering, validation, scoped language selection, read-only upgrade reports, and routing/evaluation tools.",
+      "tests": [
+        "tests/test_render_template.py",
+        "tests/test_ab_study.py",
+        "tests/test_upgrade_report.py",
+        "tests/test_evidence_audit.py"
+      ]
     },
     {
-      "authority_docs": ["AGENTS.md"],
+      "authority_docs": [
+        "AGENTS.md"
+      ],
       "consumers": [],
-      "dependencies": ["initializer", "template-assets", "tooling"],
+      "dependencies": [
+        "initializer",
+        "template-assets",
+        "tooling"
+      ],
       "entrypoints": [
         "tests/test_language_profile_selection.py",
         "tests/test_ab_study.py",
         "tests/test_render_template.py",
-        ".github/workflows/validate.yml"
+        ".github/workflows/validate.yml",
+        "tests/test_upgrade_report.py",
+        "tests/test_workflow_contracts.py",
+        "tests/test_evidence_audit.py"
       ],
       "generated_paths": [],
       "id": "tests-ci",
@@ -158,12 +257,19 @@
         ".github/workflows/**",
         "initialize-codex-project/benchmarks/**"
       ],
-      "public_contracts": [".github/workflows/validate.yml"],
+      "public_contracts": [
+        ".github/workflows/validate.yml"
+      ],
       "responsibility": "Regression, language-selection, security, deterministic routing, benchmark fixtures, and repository CI validation.",
       "tests": [
         "tests/test_ab_study.py",
         "tests/test_language_profile_selection.py",
-        "tests/test_render_template.py"
+        "tests/test_render_template.py",
+        "tests/test_upgrade_report.py",
+        "tests/test_workflow_contracts.py",
+        "tests/test_evidence_audit.py",
+        "tests/test_context_pack.py",
+        "tests/test_select_checks.py"
       ]
     }
   ],

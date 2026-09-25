@@ -1,20 +1,11 @@
 # Verification
 
-Completion means all applicable checks pass. Build does not replace tests, and “not run” does not mean “pass.”
-
-Apply `VERIFY-01`. `.agents/ai/verification-routes.json` maps changed paths to
-evidenced command records. The selector only proposes checks:
-
-```text
-python3 -B .agents/skills/build-and-test/scripts/select_checks.py \
-  --project-root <repository> --changed-file <relative-path>
-```
-
-Its output always has `execution_authorized: false`; the selector itself cannot
-grant permission. A declared L1 implementation authorizes verified,
-non-mutating, scope-relevant checks. L2-L4 use the checks approved in their task
-contract. Mutating, external, credentialed, destructive, dependency, signing,
-or configuration commands always require separate explicit authorization.
+`VERIFY-01`: use only evidenced checks relevant to the changed scope. A declared
+L1 implementation authorizes verified non-mutating checks; L2-L4 use their
+approved checks. Reuse authorization while scope, commands, prerequisites, and
+protected boundaries are unchanged. Mutating, external, credentialed,
+destructive, dependency, signing, or configuration commands require separate
+explicit authorization. Build does not replace tests; not-run never means pass.
 
 ## Verified project commands
 
@@ -36,52 +27,32 @@ or configuration commands always require separate explicit authorization.
 {{STATIC_CHECK_COMMANDS}}
 ```
 
-Commands above must come from repository scripts/configuration/CI or a
-successful project discovery command. When a category is not configured, record
-an explicit documentation gap; omit an inapplicable section only through an
-approved focused merge. Do not invent commands or leave a required section blank.
-
-For changed source files, map each applicable mechanical check to the selected
-language profile in `docs/CODING_STANDARDS.md`. A prose baseline does not prove
-formatter, linter, compiler, or static-analysis compliance, and a tool pass does
-not prove architecture, decomposition, or naming judgment that the tool cannot inspect.
-
-## Command provenance
+## Command evidence and applicability
 
 {{COMMAND_PROVENANCE}}
 
-For each command record its source, scope, prerequisites, whether it can mutate
-the worktree or external state, and expected outputs. Prefer check/dry-run modes.
-A mutating formatter or external command requires authorization in the task.
-
-## Validation matrix
+Associate each exact command with triggering paths/behavior, repository/CI source,
+prerequisites, side effects, and expected outputs. Unknown commands or applicability
+are documentation gaps, not guesses. The matrix references commands above and
+states when consumer/integration checks are required; do not duplicate commands.
 
 {{VALIDATION_MATRIX}}
 
-Start with the smallest relevant check, then run the affected target/suite and required build. Use temporary output/cache directories when supported; do not pollute the repository.
+Start with focused checks; include required target and consumer/contract checks
+when behavior crosses their boundaries. Report missing coverage. Prefer temporary
+output/cache paths where supported; do not alter code merely to force a pass
+outside the authorized scope.
 
-For cross-module or public-contract changes, include consumer tests, contract or
-integration tests, compatibility checks, and migration/rollback validation when
-applicable. If no such check exists, report the gap rather than claiming safety.
+If `.agents/ai/verification-routes.json` and its selector are installed, use them
+to select candidate checks. Otherwise select directly from the commands above.
+A selector does not authorize execution. Structured provenance and fingerprint
+audits are optional maintenance tools, not prerequisites for routine checks.
 
-## Diff checks
+## Diff checks and results
 
-```bash
-git diff --check
-git diff --stat
-git diff
-git status --short
-```
+Run `git diff --check`; review relevant diff/status against the starting state.
+Check for unintended, generated, private, or unrelated changes. Report each
+executed check as pass/fail and required unexecuted checks as not-run, with the
+reason and remaining risk. Required failures prevent a completion claim.
 
-Compare against the starting status. Check for secrets, personal data, generated output, editor state, binaries, fixtures, lockfiles, and unrelated formatting according to project policy.
-
-When review evidence shows the same manual correction or explicit operator
-workflow choice at least three times, present a scoped candidate using
-`docs/CODING_RULES_LOG.md`. Do not record the observation, synchronize rules, or
-mutate enforcement configuration without confirmation and applicable approval.
-
-## Result record
-
-Report each command, evidence source, scope, pass/fail/not-run, decisive error,
-manual checks, and residual risk. Compare status to the recorded starting state.
-Required failures mean the task is incomplete or blocked.
+<!-- optional-reference: .agents/ai/verification-routes.json -->

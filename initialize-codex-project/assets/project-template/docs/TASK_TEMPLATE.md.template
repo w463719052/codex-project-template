@@ -1,5 +1,10 @@
 # Codex Task Template
 
+Optional operator-authored input for complex tasks. Fill in the relevant fields
+and explicitly select this input for the task. Do not append completed work or
+edit this template during routine execution. Persistent records require an
+explicit request and a separate path.
+
 ## Approval state
 
 - Status: declared-L1 / proposed / approved / reapproval-required / verified
@@ -115,3 +120,5 @@ Use only the triggers and procedure in `docs/CODEX_WORKFLOW.md`.
 - [ ] Approved file/module scope was not exceeded.
 - [ ] Callers, consumers, contracts, and regression risks were reviewed.
 - [ ] Final report includes unverified items and risk.
+
+<!-- optional-reference: docs/CHANGE_IMPACT.md -->

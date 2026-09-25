@@ -1,9 +1,13 @@
 # Using Codex in {{PROJECT_NAME}}
 
-## What loads automatically
+This optional guide accompanies core/full. The default minimal output needs no
+project skills or routing JSON.
+
+## What is available
 
 - Root `AGENTS.md` is the project instruction entrypoint.
-- `.agents/ai/project-map.json` routes bounded context for discovery tasks.
+- An installed `.agents/ai/project-map.json` supports unfamiliar-work discovery;
+  it is read on demand, not automatically loaded.
 - Repository skills under `.agents/skills` are discoverable by name and description.
 - A full `SKILL.md` loads when explicitly invoked or when its description matches the task.
 - Other docs are read on demand through `AGENTS.md`; they are not all loaded for every task.
@@ -11,16 +15,19 @@
 ## Daily workflow
 
 ```text
-Describe the task using docs/TASK_TEMPLATE.md when a durable record is useful
+Describe the task in conversation or provide a completed task input
                 ↓
 Follow the classification and authorization in docs/CODEX_WORKFLOW.md
                 ↓
 Use a matching project skill or execute the scoped task
                 ↓
-$build-and-test
+Run relevant checks from docs/VERIFICATION.md
                 ↓
-$code-review
+Review the relevant diff
 ```
+
+Task templates are operator-authored input, not task history. Persistent task
+records are created only when explicitly requested.
 
 ### Feature
 
@@ -48,7 +55,8 @@ Do not modify files.
 
 ```text
 Review recurring evidence under docs/CODEX_WORKFLOW.md and use
-docs/CODING_RULES_LOG.md to present any qualifying rule candidate.
+conversation to present any qualifying rule candidate. Record it only after
+confirmation; docs/CODING_RULES_LOG.md is an optional recording structure.
 ```
 
 ## Project-specific commands

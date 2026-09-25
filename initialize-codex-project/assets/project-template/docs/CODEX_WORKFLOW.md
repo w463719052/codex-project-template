@@ -1,122 +1,77 @@
 # Codex-first Workflow
 
-This is the sole canonical definition of task classes, authorization, execution,
-scope expansion, verification, and handoff. `AGENTS.md` enforces entry into this
-workflow; `docs/CODEX_USAGE.md` gives examples; `docs/TASK_TEMPLATE.md` records
-task data; `docs/CHANGE_IMPACT.md` is the L3/L4 impact worksheet. Those documents
-reference this state machine instead of redefining it.
+This is the sole canonical definition of task classes and authorization.
 
-## 1. Investigate read-only
+## Scope and authorization (`GATE-01`)
 
-Read `AGENTS.md`, the task, starting status, and the smallest relevant evidence
-set. For large or unfamiliar work, apply `CONTEXT-01` with `$context-discovery`.
-Inspect implementation entrypoints, callers/consumers, contracts, tests, and
-verification evidence. Apply `EVIDENCE-01`: record unknown target facts as
-documentation gaps instead of guessing.
-For source changes, identify each affected language/module, read its selected
-industry profile in `docs/CODING_STANDARDS.md`, and compare it with existing
-project conventions and mechanical enforcement. Treat unresolved profile or
-rule conflicts as proposal inputs, not silent implementation choices.
-State the goal, non-goals, assumptions, compatibility, risks, documentation
-gaps, and observable completion criteria. Do not modify files or external state.
+Inspect the task, applicable instructions, starting status, and relevant evidence
+before editing. State scope and checks in the conversation by default; scale
+analysis to the task. Persistent records are opt-in.
 
-## 2. Classify and declare the scope
-
-Use `docs/TASK_TEMPLATE.md` when a durable task record is useful. L1/L2 record a
-concise impact summary there; L3/L4 complete `docs/CHANGE_IMPACT.md`. Name the
-files or directories required by the selected class, behavior and contract
-changes, verification commands, non-goals, and known risks. For each command,
-cite its repository or CI evidence.
-
-Apply the most conservative matching class:
-
-- **L1 — bounded local change.** The exact source/test/doc files are known, the
-  change stays in one module, and it preserves public contracts, schemas,
-  dependencies, build/CI/configuration, persistent data, security/privacy,
-  deployment, and external state. A direct request to implement, fix, or modify
-  authorizes the agent to declare this scope concisely and proceed. Questions,
-  diagnosis, review, or status requests do not authorize writes.
-- **L2 — approved module or directory change.** The behavior is bounded but
-  implementation may discover or add files inside explicitly approved
-  directories. Present the goal, directory boundaries, protected exclusions,
-  risks, and verification, then wait for one approval.
-- **L3 — cross-module or contract-sensitive change.** Present exact files,
-  consumers, contracts, impact, risks, and verification, then wait for explicit
-  approval.
+- **L1 — bounded local change.** Exact files in one module, preserving public
+  contracts, schemas, dependencies, build/CI/configuration, persistent data,
+  security/privacy, deployment, and external state. A direct implementation
+  request authorizes the declared scope and verified non-mutating checks.
+  Questions and review requests do not authorize edits.
+- **L2 — module or directory change.** Obtain one approval for goal, directory
+  boundaries, protected exclusions, risks, and checks. Discover files within
+  those boundaries as needed.
+- **L3 — cross-module or contract-sensitive change.** Obtain explicit approval
+  of exact files, consumers, contracts, impact, non-goals, risks, gaps, and checks.
 - **L4 — architecture, security/privacy, migration, destructive, external, or
-  high-cost failure change.** Apply the complete L3 contract plus rollback,
-  operational, and owner evidence. Wait for explicit approval.
+  high-cost failure change.** Use L3 plus rollback, operational, and owner evidence;
+  obtain explicit approval of that plan.
 
-If classification is uncertain, use the next higher class. Task size alone
-never makes a protected boundary L1 or L2.
+Use the higher class when uncertain. Before approval, investigate read-only and
+prepare the proposal; do not modify files/configuration or external state.
+Reuse approval while its goal, scope, commands, prerequisites, and protected
+boundaries remain unchanged; do not ask again for the same authorization.
 
-## 3. Authorization gate (`GATE-01`)
+Reuse already-read guidance and established scope while available and unchanged.
+Reread only relevant parts when rules change, a new module/boundary is involved,
+evidence conflicts, or context is lost. Reestablish missing scope/authorization;
+never assume it or skip new constraints to save tokens. This guides task-local
+reading, not client injection or background memory.
 
-For L1, record the direct implementation request as authorization, announce the
-class, exact files, behavior, non-goals, and checks, and proceed without waiting
-for another confirmation. If any L1 condition is unverified, reclassify before
-writing.
+## Work within scope
 
-For L2, wait for explicit approval of the directory-boundary plan. Files may
-change within those directories when they remain inside the approved behavior
-and protected exclusions. For L3/L4, wait for explicit approval of the exact
-plan and file set. Record the authorization source in the task contract.
+- `WORKTREE-01`: preserve existing changes; never reset, clean, overwrite, commit,
+  rewrite history, or reformat unrelated files.
+- `EVIDENCE-01`: verify project facts and commands from repository evidence;
+  record unknowns as documentation gaps. Do not install tools for discovery.
+- `CONTEXT-01`: start with task paths, applicable authority, callers, contracts,
+  and tests. Search before reading. Expand only for a named missing dependency
+  or evidence gap. Use an installed project map for unfamiliar work; no map is
+  required for direct bounded discovery.
+- `MODULE-01`: preserve responsibilities, dependency direction, contracts,
+  consumers, and documented shared-library gates. No speculative extraction.
+- Apply selected language baselines in `docs/CODING_STANDARDS.md` to changed
+  source; preserve verified build, compatibility, security/privacy, and public
+  contracts. Keep tests proportional to behavior changes.
 
-Before the selected class is authorized, read files, inspect
-status/diffs/configuration, list or dry-run confirmed commands, and prepare the
-declaration or proposal. Do not write files, install dependencies, run mutating
-formatters, perform external actions, or change configuration.
+## Expansion (`GATE-02`)
 
-## 4. Execute the approved scope
+Stop before an L1 declaration no longer holds, L2 leaves approved directories or
+behavior, or L3/L4 touches unlisted scope. Every class requires renewed approval
+for an unapproved public contract/schema, dependency, build/CI/configuration,
+security/privacy, destructive/external action, migration, or unrelated cleanup.
+Explain the new evidence, affected files/consumers, alternatives, risks, and
+changed verification before continuing.
 
-- Make the smallest coherent change.
-- Update tests with behavior.
-- Apply `WORKTREE-01` and `MODULE-01`.
-- For L1, edit only the declared files. For L2, edit only inside approved
-  directories. For L3/L4, edit only approved files and modules.
-- Apply the selected language industry baseline to new and materially changed
-  code while preserving verified hard constraints and approved compatibility.
-- Run the smallest relevant check after each meaningful stage.
+## Verify and hand off
 
-## 5. Scope-change gate (`GATE-02`)
+`VERIFY-01`: follow `docs/VERIFICATION.md`. Selection is not execution permission;
+use L1 authorization or the approved L2-L4 checks. Build is not a test, and
+not-run never means pass. Report environment failures separately from defects.
+Review the relevant diff/status against the starting state and run
+`git diff --check`. Report the outcome, checks, remaining gaps, and material risk.
+Review-only requests do not authorize fixes.
 
-Stop immediately when an assumption fails or the class boundary no longer
-holds. L1 must reclassify before touching an undeclared file. L2 requires renewed
-approval before leaving an approved directory or approved behavior. Every class
-requires renewed approval before a public API/schema change, dependency,
-build/CI/config change, destructive operation, external action, protected
-security/privacy boundary, migration, or unrelated cleanup. Report:
+`ADAPT-01`: after three evidenced explicit operator choices, or substantially
+the same manual correction in three places or across tasks, propose a scoped
+rule candidate in conversation. Wait for confirmation before recording or
+synchronizing it; never weaken protected boundaries from habits. Rule, tool,
+configuration, and historical migrations still use the matching approval gate.
 
-- why the approved plan is insufficient;
-- the newly affected files, modules, consumers, and risks;
-- alternatives and the recommended option;
-- added or changed verification.
-
-Continue only after renewed approval.
-
-## 6. Verify
-
-Apply `VERIFY-01` and follow `docs/VERIFICATION.md`. A selected command is not
-authorized until the task permits execution. A command not run is not a pass. Separate
-implementation failures from environment failures and report both precisely.
-Do not edit production code merely to make verification pass unless that fix is
-inside the approved scope.
-
-## 7. Review diff and hand off
-
-Run `git diff --check`, inspect relevant diff/stat/status against the starting
-state, confirm every change is approved, and check for generated, secret,
-private, binary, or unrelated files. Trace changed behavior through consumers
-and report changes, evidence, unverified items, and residual risk. If the same
-manual correction or explicit operator workflow choice is evidenced three times
-across locations or tasks, present a candidate using
-`docs/CODING_RULES_LOG.md` under `ADAPT-01`. Do not persist the observation or
-synchronize a rule until the user confirms it. Rule, tool, configuration, or
-historical-scope changes still require the applicable authorization gate.
-
-## Parallel work
-
-Use multiple agents or worktrees only when explicitly allowed, interfaces are
-stable, write scopes do not overlap, and parallelism has clear value. The
-integrating agent owns scope compliance, final diff review, and repository-level
-verification. Parallelism does not expand task approval (`WORKTREE-01`).
+Use multiple agents or worktrees only when explicitly allowed and their scopes
+are independent. Integration and verification remain the task owner's duty.

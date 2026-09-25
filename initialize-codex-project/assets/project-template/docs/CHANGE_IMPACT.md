@@ -1,10 +1,10 @@
 # Change Impact Analysis
 
-Use this worksheet for L3/L4 tasks. L1/L2 record their concise impact summary in
-`docs/TASK_TEMPLATE.md`; if investigation requires this full worksheet,
-reclassify under `docs/CODEX_WORKFLOW.md` before implementation. For L3/L4,
-complete every applicable field and write `none` with evidence instead of
-silently skipping a category.
+This is an optional worksheet for L3/L4 tasks. Perform the analysis in the
+conversation by default. If the operator explicitly requests a persistent
+record, copy the relevant structure to that record; do not append task history
+here. L1/L2 need only a concise impact summary. Classification and approval
+remain defined by `docs/CODEX_WORKFLOW.md`.
 
 ## Change surface
 

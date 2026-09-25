@@ -176,6 +176,23 @@ class LanguageProfileSelectionTests(unittest.TestCase):
             ],
         )
 
+    def test_scope_separates_application_from_tooling(self):
+        self.write("app/main.go")
+        self.write("tools/check.py")
+        result = select_profiles(self.catalog, self.root, scopes=["app"], role="application")
+        self.assertEqual(self.ids(result["selected_profiles"]), ["go"])
+        self.assertEqual(result["scope"], {"paths": ["app"], "role": "application"})
+
+    def test_overlapping_scopes_do_not_double_count(self):
+        self.write("app/main.go")
+        result = select_profiles(self.catalog, self.root, scopes=["app", "app/main.go"])
+        self.assertEqual(result["scanned_files"], 1)
+
+    def test_scope_cannot_escape_repository(self):
+        from select_language_profiles import SelectionError
+        with self.assertRaisesRegex(SelectionError, "unsafe scope"):
+            select_profiles(self.catalog, self.root, scopes=["../outside"])
+
 
 if __name__ == "__main__":
     unittest.main()

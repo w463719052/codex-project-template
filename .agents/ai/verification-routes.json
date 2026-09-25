@@ -37,14 +37,22 @@
     }
   ],
   "documentation_gaps": [],
-  "fallback_check_ids": ["template-validator", "unit-tests", "diff-check"],
+  "fallback_check_ids": [
+    "template-validator",
+    "unit-tests",
+    "diff-check"
+  ],
   "routes": [
     {
-      "consumer_check_ids": ["unit-tests"],
+      "consumer_check_ids": [
+        "unit-tests"
+      ],
       "escalate_when": [
         "A generated contract, default output, authority rule, or language profile changes."
       ],
-      "focused_check_ids": ["template-validator"],
+      "focused_check_ids": [
+        "template-validator"
+      ],
       "id": "template-assets",
       "path_patterns": [
         "initialize-codex-project/assets/project-template/**",
@@ -52,40 +60,72 @@
         "initialize-codex-project/examples/**",
         "initialize-codex-project/references/**"
       ],
-      "required_build_ids": ["routing-benchmark", "diff-check"]
+      "required_build_ids": [
+        "routing-benchmark",
+        "diff-check"
+      ]
     },
     {
-      "consumer_check_ids": ["template-validator"],
+      "consumer_check_ids": [
+        "template-validator",
+        "ab-study-example"
+      ],
       "escalate_when": [
         "Rendering, collision, path safety, context schema, language selection, or state manifest behavior changes."
       ],
-      "focused_check_ids": ["unit-tests"],
+      "focused_check_ids": [
+        "unit-tests"
+      ],
       "id": "tooling",
       "path_patterns": [
         "initialize-codex-project/scripts/**",
         "initialize-codex-project/assets/project-template/skills/**"
       ],
-      "required_build_ids": ["routing-benchmark", "diff-check"]
+      "required_build_ids": [
+        "routing-benchmark",
+        "diff-check"
+      ]
     },
     {
-      "consumer_check_ids": ["template-validator"],
-      "escalate_when": ["A fixture, expected route, or CI command changes."],
-      "focused_check_ids": ["unit-tests", "routing-benchmark"],
+      "consumer_check_ids": [
+        "template-validator"
+      ],
+      "escalate_when": [
+        "A fixture, expected route, or CI command changes."
+      ],
+      "focused_check_ids": [
+        "unit-tests",
+        "routing-benchmark"
+      ],
       "id": "tests-and-benchmarks",
       "path_patterns": [
         "tests/**",
         "initialize-codex-project/benchmarks/**",
         ".github/workflows/**"
       ],
-      "required_build_ids": ["diff-check"]
+      "required_build_ids": [
+        "diff-check"
+      ]
     },
     {
       "consumer_check_ids": [],
-      "escalate_when": ["Operator instructions, template version, or public usage changes."],
-      "focused_check_ids": ["template-validator"],
+      "escalate_when": [
+        "Operator instructions, template version, or public usage changes."
+      ],
+      "focused_check_ids": [
+        "template-validator"
+      ],
       "id": "governance-docs",
-      "path_patterns": ["AGENTS.md", "README.md", "CHANGELOG.md", ".agents/ai/**"],
-      "required_build_ids": ["routing-benchmark", "diff-check"]
+      "path_patterns": [
+        "AGENTS.md",
+        "README.md",
+        "CHANGELOG.md",
+        ".agents/ai/**"
+      ],
+      "required_build_ids": [
+        "routing-benchmark",
+        "diff-check"
+      ]
     }
   ],
   "schema_version": 1

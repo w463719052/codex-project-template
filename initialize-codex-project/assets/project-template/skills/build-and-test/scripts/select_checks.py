@@ -7,6 +7,7 @@ import argparse
 import copy
 import fnmatch
 import json
+import importlib.util
 import re
 import sys
 from pathlib import Path, PurePosixPath
@@ -28,6 +29,20 @@ ROUTE_FIELDS = {
 
 class CheckSelectionError(RuntimeError):
     """Raised for invalid verification metadata or changed paths."""
+
+
+def check_provenance(record):
+    if "provenance" not in record:
+        return
+    spec = importlib.util.spec_from_file_location("routing_evidence", Path(__file__).parents[2] / "context-discovery/scripts/audit_evidence.py")
+    if spec is None or spec.loader is None:
+        raise CheckSelectionError("cannot load provenance validator")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    try:
+        module.validate_provenance(record["provenance"])
+    except RuntimeError as exc:
+        raise CheckSelectionError(str(exc)) from exc
 
 
 def load_json(path: Path) -> Any:
@@ -92,8 +107,9 @@ def validate_verification_routes(raw: Any) -> Dict[str, Any]:
         raise CheckSelectionError("commands must be an array")
     command_ids: List[str] = []
     for index, command in enumerate(commands):
-        if not isinstance(command, dict) or set(command) != COMMAND_FIELDS:
+        if not isinstance(command, dict) or set(command) - {"provenance"} != COMMAND_FIELDS:
             raise CheckSelectionError(f"commands[{index}] has missing or unknown fields")
+        check_provenance(command)
         command_id = require_string(command["id"], f"commands[{index}].id")
         if not ID_PATTERN.fullmatch(command_id) or command_id in command_ids:
             raise CheckSelectionError(f"invalid or duplicate command id: {command_id}")

@@ -5,9 +5,9 @@ description: Run the verified build, test, format, lint, static-analysis, and di
 
 # Build and Test
 
-Read the authorized task contract, `docs/CHANGE_IMPACT.md`,
+Read the authorized task scope from the conversation or operator-provided input,
 `docs/VERIFICATION.md`, and starting `git status --short`. Confirm the changed
-files and modules remain inside the authorized scope. First run
+files and modules remain inside the authorized scope. For installed routing, run
 `scripts/select_checks.py` for each changed path to produce a deterministic
 candidate list. Review its evidence and task authorization before executing
 anything; selection itself never authorizes or runs commands (`VERIFY-01`). A

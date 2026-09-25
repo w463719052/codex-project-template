@@ -8,7 +8,7 @@ import json
 import os
 import re
 import sys
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Set, Tuple
 
 
@@ -134,18 +134,40 @@ def _sample(paths: Iterable[str]) -> List[str]:
 
 
 def collect_path_evidence(
-    project_root: Path, max_files: int
+    project_root: Path, max_files: int, scopes: Sequence[str] = ()
 ) -> Tuple[Dict[str, Set[str]], Dict[str, Set[str]], int, bool]:
     if max_files <= 0:
         raise SelectionError("max_files must be positive")
     if project_root.is_symlink() or not project_root.is_dir():
         raise SelectionError(f"project root must be a non-symlink directory: {project_root}")
 
+    scan_roots = []
+    for raw in scopes or (".",):
+        path = PurePosixPath(raw)
+        if path.is_absolute() or ".." in path.parts or any(c in raw for c in "\\:\x00"):
+            raise SelectionError(f"unsafe scope: {raw!r}")
+        current = project_root
+        for part in path.parts:
+            current = current / part
+            if current.is_symlink():
+                raise SelectionError(f"symbolic-link scope rejected: {raw}")
+        if not current.exists():
+            raise SelectionError(f"missing scope: {raw}")
+        scan_roots.append(current)
+
+    def walk_scopes():
+        for scan_root in sorted(set(scan_roots)):
+            if scan_root.is_file():
+                yield str(scan_root.parent), [], [scan_root.name]
+            else:
+                yield from os.walk(scan_root, followlinks=False)
+
+    seen = set()
     extension_files: Dict[str, Set[str]] = {}
     marker_files: Dict[str, Set[str]] = {}
     scanned_files = 0
     truncated = False
-    for current, directory_names, file_names in os.walk(project_root, followlinks=False):
+    for current, directory_names, file_names in walk_scopes():
         directory_names[:] = sorted(
             name
             for name in directory_names
@@ -154,8 +176,9 @@ def collect_path_evidence(
         )
         for name in sorted(file_names):
             path = Path(current) / name
-            if path.is_symlink():
+            if path.is_symlink() or path in seen:
                 continue
+            seen.add(path)
             scanned_files += 1
             if scanned_files > max_files:
                 scanned_files = max_files
@@ -170,10 +193,13 @@ def collect_path_evidence(
 
 
 def select_profiles(
-    catalog: Mapping[str, Any], project_root: Path, max_files: int = DEFAULT_MAX_FILES
+    catalog: Mapping[str, Any], project_root: Path, max_files: int = DEFAULT_MAX_FILES,
+    scopes: Sequence[str] = (), role: str = "unknown"
 ) -> Dict[str, Any]:
+    if role not in {"unknown", "application", "test", "tooling"}:
+        raise SelectionError("role must be unknown, application, test, or tooling")
     extension_files, marker_files, scanned_files, truncated = collect_path_evidence(
-        project_root, max_files
+        project_root, max_files, scopes
     )
     selected: List[Dict[str, Any]] = []
     ambiguous: List[Dict[str, Any]] = []
@@ -212,6 +238,7 @@ def select_profiles(
             ambiguous.append(record)
 
     return {
+        "scope": {"paths": list(scopes) or ["."], "role": role},
         "ambiguous_profiles": ambiguous,
         "catalog_last_verified": catalog["last_verified"],
         "execution_authorized": False,
@@ -229,6 +256,8 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument("--project-root", required=True, type=Path)
     parser.add_argument("--catalog", type=Path, default=default_catalog_path())
     parser.add_argument("--max-files", type=int, default=DEFAULT_MAX_FILES)
+    parser.add_argument("--scope", action="append", default=[], help="Relative module path; repeatable")
+    parser.add_argument("--role", choices=["unknown", "application", "test", "tooling"], default="unknown")
     return parser.parse_args(argv)
 
 
@@ -236,7 +265,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parse_args(argv)
     try:
         catalog = load_catalog(args.catalog)
-        result = select_profiles(catalog, args.project_root.absolute(), args.max_files)
+        result = select_profiles(catalog, args.project_root.absolute(), args.max_files, args.scope, args.role)
     except SelectionError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

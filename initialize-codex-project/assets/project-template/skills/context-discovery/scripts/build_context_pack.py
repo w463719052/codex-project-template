@@ -7,6 +7,7 @@ import argparse
 import copy
 import fnmatch
 import json
+import importlib.util
 import re
 import sys
 from collections import OrderedDict
@@ -38,6 +39,20 @@ ROUTE_FIELDS = {
 
 class ContextPackError(RuntimeError):
     """Raised for invalid routing data or unsafe file selection."""
+
+
+def check_provenance(record):
+    if "provenance" not in record:
+        return
+    spec = importlib.util.spec_from_file_location("routing_evidence", Path(__file__).with_name("audit_evidence.py"))
+    if spec is None or spec.loader is None:
+        raise ContextPackError("cannot load provenance validator")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    try:
+        module.validate_provenance(record["provenance"])
+    except RuntimeError as exc:
+        raise ContextPackError(str(exc)) from exc
 
 
 def load_json(path: Path) -> Any:
@@ -144,8 +159,9 @@ def validate_project_map(raw: Any) -> Dict[str, Any]:
     ]
     for index, raw_module in enumerate(modules):
         module = require_object(raw_module, f"modules[{index}]")
-        if set(module) != MODULE_FIELDS:
+        if set(module) - {"provenance"} != MODULE_FIELDS:
             raise ContextPackError(f"modules[{index}] has missing or unknown fields")
+        check_provenance(module)
         module_id = require_string(module["id"], f"modules[{index}].id")
         if not ID_PATTERN.fullmatch(module_id) or module_id in module_ids:
             raise ContextPackError(f"invalid or duplicate module id: {module_id}")
@@ -259,16 +275,16 @@ def build_context_pack(
             if path_matches(changed, module["paths"]) and module["id"] not in selected_module_ids:
                 selected_module_ids.append(module["id"])
 
-    selected_routes: List[Mapping[str, Any]] = []
-    for route in data["context_routes"]:
-        task_match = task_type is not None and task_type in route["task_types"]
-        module_match = bool(set(route["module_ids"]) & set(selected_module_ids))
-        if task_match or module_match:
-            selected_routes.append(route)
-            if task_match:
-                for module_id in route["module_ids"]:
-                    if module_id not in selected_module_ids:
-                        selected_module_ids.append(module_id)
+    has_scope_hint = bool(module_ids or changed_files)
+    task_routes = [route for route in data["context_routes"]
+                   if task_type is not None and task_type in route["task_types"]]
+    if not has_scope_hint:
+        task_modules = {module_id for route in task_routes for module_id in route["module_ids"]}
+        selected_module_ids = [module_id for module_id in known_modules if module_id in task_modules]
+    selected_routes = sorted([
+        route for route in data["context_routes"]
+        if set(route["module_ids"]) & set(selected_module_ids)
+    ], key=lambda route: route["id"])
 
     candidates: "OrderedDict[str, List[str]]" = OrderedDict()
 
@@ -280,14 +296,20 @@ def build_context_pack(
 
     for changed in normalized_changes:
         add(changed, "changed-file")
-    for route in selected_routes:
-        for path in route["initial_paths"]:
-            add(path, f"route:{route['id']}")
+    # Essential module evidence precedes broad route examples in the budget.
     for module_id in selected_module_ids:
         module = known_modules[module_id]
-        for field in ("entrypoints", "public_contracts", "authority_docs", "tests"):
+        for field in ("authority_docs", "public_contracts", "tests", "entrypoints"):
             for path in module[field]:
                 add(path, f"module:{module_id}:{field}")
+    outside_scope = []
+    for route in selected_routes:
+        for path in route["initial_paths"]:
+            owners = {module["id"] for module in data["modules"] if path_matches(path, module["paths"])}
+            if has_scope_hint and owners and not owners.intersection(selected_module_ids) and path not in candidates:
+                outside_scope.append({"path": path, "reason": "outside-selected-modules"})
+            else:
+                add(path, f"route:{route['id']}")
 
     file_budget = (
         data["budgets"]["max_initial_files"] if max_files is None else max_files
@@ -299,7 +321,7 @@ def build_context_pack(
     require_positive_int(byte_budget, "max_bytes")
 
     selected_files: List[Dict[str, Any]] = []
-    omitted: List[Dict[str, Any]] = []
+    omitted: List[Dict[str, Any]] = list(outside_scope)
     gaps: List[str] = list(data["documentation_gaps"])
     total_bytes = 0
     exclusions = data["excluded_paths"]
@@ -332,6 +354,9 @@ def build_context_pack(
         "project_name": data["project_name"],
         "task_type": task_type,
         "selected_modules": selected_module_ids,
+        "scope_required": not has_scope_hint and len(selected_module_ids) > 1,
+        "candidate_routes": [route["id"] for route in task_routes],
+        "execution_authorized": False,
         "selected_routes": [route["id"] for route in selected_routes],
         "files": selected_files,
         "total_files": len(selected_files),

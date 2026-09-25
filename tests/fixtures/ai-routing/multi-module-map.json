@@ -1,0 +1,76 @@
+{
+  "budgets": {
+    "max_expansion_rounds": 2,
+    "max_initial_bytes": 4096,
+    "max_initial_files": 4
+  },
+  "context_routes": [
+    {
+      "id": "all-features",
+      "task_types": [
+        "fix",
+        "feature"
+      ],
+      "module_ids": [
+        "alpha",
+        "beta"
+      ],
+      "initial_paths": [
+        "beta/main.py",
+        "alpha/main.py"
+      ],
+      "expand_when": [
+        "A consumer outside the selected module is affected."
+      ]
+    }
+  ],
+  "documentation_gaps": [],
+  "excluded_paths": [
+    ".git/**",
+    "**/__pycache__/**"
+  ],
+  "modules": [
+    {
+      "id": "alpha",
+      "paths": [
+        "alpha/**"
+      ],
+      "responsibility": "Own alpha",
+      "entrypoints": [
+        "alpha/main.py"
+      ],
+      "public_contracts": [],
+      "dependencies": [],
+      "consumers": [],
+      "tests": [
+        "alpha/test_main.py"
+      ],
+      "authority_docs": [
+        "AGENTS.md"
+      ],
+      "generated_paths": []
+    },
+    {
+      "id": "beta",
+      "paths": [
+        "beta/**"
+      ],
+      "responsibility": "Own beta",
+      "entrypoints": [
+        "beta/main.py"
+      ],
+      "public_contracts": [],
+      "dependencies": [],
+      "consumers": [],
+      "tests": [
+        "beta/test_main.py"
+      ],
+      "authority_docs": [
+        "AGENTS.md"
+      ],
+      "generated_paths": []
+    }
+  ],
+  "project_name": "Routing Fixture",
+  "schema_version": 1
+}

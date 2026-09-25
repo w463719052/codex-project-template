@@ -35,7 +35,7 @@ class ContextPackTests(unittest.TestCase):
         self.assertEqual(result["selected_routes"], ["core-change"])
         self.assertEqual(
             [item["path"] for item in result["files"]],
-            ["src/core.py", "docs/architecture.md", "tests/test_core.py"],
+            ["docs/architecture.md", "tests/test_core.py", "src/core.py"],
         )
         self.assertLessEqual(result["total_files"], result["budget"]["max_files"])
         self.assertLessEqual(result["total_bytes"], result["budget"]["max_bytes"])
@@ -84,6 +84,38 @@ class ContextPackTests(unittest.TestCase):
             self.assertTrue(
                 any("symbolic-link" in item["reason"] for item in result["omitted"])
             )
+
+    def test_route_membership_does_not_depend_on_array_order(self):
+        extra = copy.deepcopy(self.project_map["context_routes"][0])
+        extra.update(id="other-core", task_types=["other"])
+        self.project_map["context_routes"].insert(0, extra)
+        first = MODULE.build_context_pack(self.project_root, self.project_map, task_type="feature")
+        self.project_map["context_routes"].reverse()
+        second = MODULE.build_context_pack(self.project_root, self.project_map, task_type="feature")
+        self.assertEqual(set(first["selected_routes"]), set(second["selected_routes"]))
+        self.assertEqual(set(first["selected_routes"]), {"core-change", "other-core"})
+
+    def test_explicit_scope_prevents_generic_task_expansion(self):
+        data = json.loads((FIXTURE / "multi-module-map.json").read_text())
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "AGENTS.md").write_text("rules")
+            for name in ("alpha", "beta"):
+                (root / name).mkdir()
+                (root / name / "main.py").write_text("source")
+                (root / name / "test_main.py").write_text("test")
+            result = MODULE.build_context_pack(root, data, changed_files=["alpha/main.py"], task_type="fix")
+            self.assertEqual(result["selected_modules"], ["alpha"])
+            self.assertEqual([item["path"] for item in result["files"]], ["alpha/main.py", "AGENTS.md", "alpha/test_main.py"])
+            self.assertIn({"path": "beta/main.py", "reason": "outside-selected-modules"}, result["omitted"])
+            self.assertFalse(result["scope_required"])
+            broad = MODULE.build_context_pack(root, data, task_type="fix")
+            self.assertTrue(broad["scope_required"])
+
+    def test_optional_provenance_is_validated(self):
+        self.project_map["modules"][0]["provenance"] = [{"path": "../outside"}]
+        with self.assertRaisesRegex(MODULE.ContextPackError, "unsafe provenance"):
+            MODULE.build_context_pack(self.project_root, self.project_map, task_type="fix")
 
 
 if __name__ == "__main__":

@@ -1,63 +1,35 @@
 # {{PROJECT_NAME}} Agent Instructions
 
-This file is the concise navigation and mandatory-rules entrypoint. Read only
-the documents and source files relevant to the current task.
-
-## Authority
+## Project evidence
 
 {{AUTHORITY_DOCUMENTS}}
 
-Within repository guidance, use this fixed order: the authorized task
-contract; the closest applicable nested `AGENTS.override.md` or `AGENTS.md`;
-this root file; then the authority documents in their listed order. Higher-level
-system, security, privacy, legal, and compatibility constraints always remain in
-force. Stop before implementation when a conflict remains unresolved; never
-choose a rule from an inferred timestamp.
-
-## Repository map
-
 {{REPOSITORY_MAP}}
 
-## Mandatory rules
+{{ARCHITECTURE_SUMMARY}}
 
-- `GATE-01` and `GATE-02`: use the task classes, authorization gates, protected
-  boundaries, and scope-change procedure defined only in
-  `docs/CODEX_WORKFLOW.md`; do not invent a local exception.
-- `WORKTREE-01`: preserve existing work; do not reset, clean, overwrite,
-  commit, rewrite history, or reformat unrelated files.
-- `EVIDENCE-01`: use only verified project facts and commands. Record unknowns
-  as documentation gaps; do not invent policy or install discovery tools.
-- `CONTEXT-01`: use `.agents/ai/project-map.json` and
-  `docs/AI_CONTEXT_STRATEGY.md`; start bounded and expand only for a named
-  evidence trigger.
-- `MODULE-01`: preserve documented module responsibilities, dependency
-  direction, contracts, and shared-library gates.
-- `VERIFY-01`: select evidenced scope-relevant checks through
-  `docs/VERIFICATION.md`; command selection never authorizes execution, and
-  not-run never means pass.
-- `ADAPT-01`: apply the evidence, confirmation, and protected-boundary rules in
-  `docs/CODEX_WORKFLOW.md` and `docs/CODING_RULES_LOG.md`.
-- For every new or materially changed source file, detect its language and apply
-  the selected industry profile in `docs/CODING_STANDARDS.md`. Treat verified
-  build, compatibility, security, privacy, and public-contract requirements as
-  hard constraints; record rather than hide conflicts with existing conventions.
-- Keep the verified architecture and dependency direction:
+Within repository guidance, authority is: authorized task, closest applicable
+nested AGENTS.override.md or AGENTS.md, this file, then the listed authorities.
+Higher-level system and safety constraints remain in force. Report unresolved
+conflicts; do not choose by inferred timestamps.
 
-  {{ARCHITECTURE_SUMMARY}}
-- Add or update tests in proportion to changed behavior.
-- Record concise L1/L2 impact in `docs/TASK_TEMPLATE.md`; use
-  `docs/CHANGE_IMPACT.md` for the full L3/L4 trace.
-- Finish with `git diff --check`, relevant diff/status review, and a report of unverified items and residual risk.
+## Working rules
 
-## Workflow entrypoints
+Use `docs/CODEX_WORKFLOW.md` for task scope and authorization (`GATE-01`,
+`GATE-02`). Apply `WORKTREE-01` to preserve existing work, `EVIDENCE-01` to use
+verified facts, `CONTEXT-01` to search narrowly, and `MODULE-01` to preserve
+contracts and dependency direction.
 
-- New feature or fix: follow `docs/CODEX_WORKFLOW.md`; use
-  `docs/TASK_TEMPLATE.md` when a durable task record is useful.
-- Large or unfamiliar task: use `$context-discovery` before proposing scope.
-- Build and test: use `$build-and-test` or follow `docs/VERIFICATION.md`.
-- Review: use `$code-review`; a review-only request does not authorize fixes.
-- Coding rules: follow `docs/CODING_STANDARDS.md`, its selected language
-  profiles, enforcement sources, and `docs/CODING_RULES_LOG.md`.
-- Architecture, ADR, module-map, shared-library, performance, and skill-design
-  guidance is optional and applies only when listed in the generated template
-  state and selected from verified project evidence.
+- Source changes: read the applicable parts of `docs/CODING_STANDARDS.md`.
+- Verification: use evidenced commands in `docs/VERIFICATION.md` (`VERIFY-01`).
+- Repeated choices: propose a candidate before recording it (`ADAPT-01`).
+
+Keep task scope and results in conversation. Persistent task records require an
+explicit request. Reuse applicable guidance already available in this task;
+do not reread every linked document or create routine routing metadata.
+
+If `.agents/ai/project-map.json` is installed, use its relevant module routes
+for unfamiliar work; otherwise search the task's paths and callers directly.
+Project skills, when installed, are optional task-specific helpers.
+
+<!-- optional-reference: .agents/ai/project-map.json -->

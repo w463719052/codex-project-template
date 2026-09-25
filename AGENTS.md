@@ -51,8 +51,8 @@ Use these stable rule IDs in plans, templates, reviews, and validation results:
   standard while verified build, compatibility, security/privacy, and public-
   contract requirements remain hard constraints.
 - If substantially the same manual correction appears at least three times or
-  recurs across tasks, require a recorded candidate and an approved rule or
-  automation replacement; never expand silently into config or history migration.
+  recurs across tasks, present a candidate, record it only after confirmation, and require an
+  approved rule or automation replacement; never expand silently into config or history migration.
 - Treat repeated, evidenced operator workflow choices the same way: suggest a
   scoped rule adjustment after three occurrences, but never persist an
   observation or synchronize a rule without explicit user confirmation.

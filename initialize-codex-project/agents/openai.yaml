@@ -1,4 +1,4 @@
 interface:
   display_name: "Initialize Codex Project"
   short_description: "Create a verified Codex-first repository workflow"
-  default_prompt: "Inspect this repository read-only, select applicable reviewed language engineering profiles from path/build evidence, reconcile them with existing constraints, and propose a tiered Codex-first workflow. Use direct authorization only for a declared bounded L1 change, one approved directory plan for L2, and exact approval for L3/L4. Default to the core artifact preset; add optional architecture, ADR, shared-library, performance, or skill-design files only from verified need."
+  default_prompt: "Use $initialize-codex-project to inspect this repository and propose four concise guidance files from verified evidence, adding routing or project skills only when needed and explicitly selected."

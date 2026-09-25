@@ -1,141 +1,21 @@
 {
   "values": {
-    "ARCHITECTURE_DRIVERS": "DOCUMENTATION GAP: identify approved quality attributes, compatibility constraints, and operational drivers.",
-    "ARCHITECTURE_GAPS": "- Decision owner required: architecture has not been formally documented.",
-    "ARCHITECTURE_OVERVIEW": "DOCUMENTATION GAP: derive the architecture only from verified source entrypoints and authority documents.",
     "ARCHITECTURE_SUMMARY": "No verified architecture summary yet; preserve observed dependency direction and obtain owner approval before changing a boundary.",
     "AUTHORITY_DOCUMENTS": "1. `README.md` for confirmed project purpose.\n2. DOCUMENTATION GAP: product, architecture, and coding authorities require owner confirmation.",
     "BUILD_COMMANDS": "No verified build command. Documentation gap: confirm from repository configuration or CI.",
     "CODING_STANDARD_CONFLICTS": "No target-specific conflict can be evaluated in the example context. Documentation gap: compare selected profiles with repository formatters, linters, compilers, CI, public contracts, and local conventions.",
     "CODING_STANDARD_GAPS": "- Confirm language/framework standards and their enforcement configuration with project owners.",
-    "COMMAND_PROVENANCE": "| Command | Evidence | Scope | Mutates state |\n| --- | --- | --- | --- |\n| None confirmed | Documentation gap | Unknown | Unknown |",
-    "CONTEXT_BUDGETS": "Initial discovery: at most 8 files, 64 KiB, and 2 evidence-driven expansion rounds.",
-    "CONTEXT_EXCLUSIONS": "Exclude VCS metadata, dependency caches, generated binaries, secrets, credentials, dumps, and large media unless explicitly required and approved.",
-    "CONTEXT_GAPS": "- Confirm module-specific context routes after repository discovery.",
-    "CONTEXT_ROUTING_NOTES": "Start from the approved task, repository authority files, and the mapped module entrypoints. Expand only when a named condition is met.",
-    "CROSS_CUTTING_CONCERNS": "DOCUMENTATION GAP: verify error, concurrency, observability, security/privacy, persistence, configuration, and resource rules.",
-    "DATA_AND_CONTROL_FLOW": "DOCUMENTATION GAP: trace verified entrypoints, data owners, side effects, and downstream consumers.",
-    "DEPENDENCY_DIRECTION": "DOCUMENTATION GAP: record only dependencies observed in source/build configuration and approved by maintainers.",
+    "COMMAND_PROVENANCE": "| Command | Applicable changes | Source | Prerequisites | Side effects | Expected result |\n| --- | --- | --- | --- | --- | --- |\n| None verified | Documentation gap: inspect affected paths/behavior | Documentation gap: inspect repository/CI | Unknown | Unknown | Unknown |",
     "ENFORCEMENT_SOURCES": "DOCUMENTATION GAP: locate formatter, linter, type/static-analysis, test, generated-code, and CI configuration.",
     "ERROR_CONCURRENCY_RESOURCE_RULES": "DOCUMENTATION GAP: confirm project-specific error, cancellation, concurrency, lifecycle, and resource ownership rules.",
     "LANGUAGE_AND_FRAMEWORK_RULES": "DOCUMENTATION GAP: run the read-only language selector against the target, load only its selected reviewed profiles, and add framework-specific rules from verified target evidence.",
     "LANGUAGE_PROFILE_SELECTION": "| Language/profile | Detection evidence | Primary authority | Status |\n| --- | --- | --- | --- |\n| None selected in example | No target repository evidence supplied | Run the bundled selector | Documentation gap |",
-    "MODULE_GAPS": "- Confirm module owners, public contracts, consumers, and prohibited dependency edges.",
-    "MODULE_INVENTORY": "| Module/path | Responsibility | Public entrypoints | Dependencies | Consumers | Tests | Owner |\n| --- | --- | --- | --- | --- | --- | --- |\n| Documentation gap | Requires repository discovery | Unknown | Unknown | Unknown | Unknown | Unassigned |",
     "NAMING_AND_API_RULES": "DOCUMENTATION GAP: confirm naming, visibility, compatibility, and API documentation rules.",
-    "PERFORMANCE_BASELINE": "No measured repository baseline yet. Record selected file count, selected bytes, discovery rounds, and verification command count before tuning.",
-    "PERFORMANCE_GAPS": "- Replace byte-count proxies with measured model token usage only when the runtime exposes reproducible telemetry.",
-    "PROHIBITED_DEPENDENCIES": "DOCUMENTATION GAP: no prohibited edges may be asserted until architecture evidence and owner approval exist.",
     "PROJECT_NAME": "Example Project",
-    "PROJECT_MAP_JSON": {
-      "budgets": {
-        "max_expansion_rounds": 2,
-        "max_initial_bytes": 65536,
-        "max_initial_files": 8
-      },
-      "context_routes": [
-        {
-          "expand_when": [
-            "A referenced caller, consumer, contract, or verification source is outside the initial pack."
-          ],
-          "id": "default-task",
-          "initial_paths": [
-            "AGENTS.md",
-            "docs/CODEX_WORKFLOW.md",
-            "docs/CODING_STANDARDS.md"
-          ],
-          "module_ids": [
-            "repository-governance"
-          ],
-          "task_types": [
-            "feature",
-            "fix",
-            "review"
-          ]
-        }
-      ],
-      "documentation_gaps": [
-        "Confirm source and test module boundaries from repository evidence."
-      ],
-      "excluded_paths": [
-        ".git/**",
-        "**/__pycache__/**",
-        "**/*.pyc"
-      ],
-      "modules": [
-        {
-          "authority_docs": [
-            "AGENTS.md",
-            "docs/CODEX_WORKFLOW.md",
-            "docs/CODING_STANDARDS.md"
-          ],
-          "consumers": [],
-          "dependencies": [],
-          "entrypoints": [
-            "AGENTS.md"
-          ],
-          "generated_paths": [],
-          "id": "repository-governance",
-          "paths": [
-            "AGENTS.md",
-            "docs/**",
-            ".agents/**"
-          ],
-          "public_contracts": [
-            "docs/CODEX_WORKFLOW.md",
-            "docs/CODING_STANDARDS.md",
-            "docs/VERIFICATION.md"
-          ],
-          "responsibility": "Repository-wide AI workflow, architecture documentation, and verification guidance.",
-          "tests": []
-        }
-      ],
-      "project_name": "Example Project",
-      "schema_version": 1
-    },
-    "PUBLIC_CONTRACTS": "DOCUMENTATION GAP: inventory exported APIs, wire formats, events, schemas, persisted data, configuration keys, and external behavior.",
-    "QUALITY_GUARDRAILS": "Do not trade correctness, security, compatibility, required tests, or approval boundaries for fewer files, fewer bytes, or faster execution.",
     "REPOSITORY_MAP": "- `README.md`: confirmed project overview.\n- DOCUMENTATION GAP: source, test, generated, configuration, and deployment paths require discovery.",
     "STATIC_CHECK_COMMANDS": "No verified format, lint, or static-analysis command. Documentation gap: confirm from repository configuration or CI.",
-    "SYSTEM_BOUNDARY": "DOCUMENTATION GAP: identify in-scope components, external systems, data stores, and trust boundaries.",
     "TEST_AND_DOCUMENTATION_RULES": "DOCUMENTATION GAP: confirm test levels, naming, fixtures, coverage expectations, and public documentation requirements.",
     "TEST_COMMANDS": "No verified test command. Documentation gap: confirm from repository configuration or CI.",
-    "VALIDATION_MATRIX": "| Change type | Focused check | Suite/build | Consumer/contract | Manual |\n| --- | --- | --- | --- | --- |\n| Documentation only | Link/structure validation | Not applicable unless configured | Not applicable | Review rendered output |",
-    "VERIFICATION_COMMANDS": "No project-specific command confirmed. Use only commands evidenced by repository configuration or CI.",
-    "VERIFICATION_ROUTES_JSON": {
-      "commands": [
-        {
-          "command": "git diff --check",
-          "evidence": "docs/VERIFICATION.md#diff-checks",
-          "id": "diff-check",
-          "kind": "diff",
-          "mutates": false
-        }
-      ],
-      "documentation_gaps": [
-        "Confirm project build, test, format, lint, and static-analysis commands."
-      ],
-      "fallback_check_ids": [
-        "diff-check"
-      ],
-      "routes": [
-        {
-          "consumer_check_ids": [],
-          "escalate_when": [
-            "A changed contract has consumers outside the approved scope."
-          ],
-          "focused_check_ids": [
-            "diff-check"
-          ],
-          "id": "repository-default",
-          "path_patterns": [
-            "**"
-          ],
-          "required_build_ids": []
-        }
-      ],
-      "schema_version": 1
-    }
-  },
-  "preset": "core"
+    "VALIDATION_MATRIX": "| Changed scope | Applicable command above | Expand checks when | Coverage gap |\n| --- | --- | --- | --- |\n| Not yet inspected | None verified | Public contracts or consumers are affected | Confirm focused and consumer/integration checks from target evidence |"
+  }
 }

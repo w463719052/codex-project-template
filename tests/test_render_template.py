@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import json
+import os
+import subprocess
 import sys
 import tempfile
 import unittest
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from unittest import mock
 
 
@@ -14,6 +16,9 @@ sys.path.insert(0, str(SCRIPTS))
 
 from render_template import (  # noqa: E402
     RenderError,
+    RenderedFile,
+    classify_files,
+    write_new_files,
     all_placeholder_names,
     render_project,
     source_root,
@@ -104,16 +109,14 @@ class RenderTemplateTests(unittest.TestCase):
         }
 
     def test_dry_run_does_not_create_target(self) -> None:
-        context = self.write_context(include=["AGENTS.md.template"])
+        context = self.write_context(include=["docs/ADR_TEMPLATE.md"])
         target = self.root / "target"
         result = render_project(context, target, write=False)
         self.assertFalse(target.exists())
         self.assertEqual([status for status, _ in result], ["create", "create"])
 
     def test_write_maps_skill_and_strips_template_suffix(self) -> None:
-        context = self.write_context(
-            include=["skills/build-and-test/SKILL.md.template"]
-        )
+        context = self.write_context(preset="core")
         target = self.root / "target"
         render_project(context, target, write=True)
         skill = target / ".agents" / "skills" / "build-and-test" / "SKILL.md"
@@ -121,8 +124,8 @@ class RenderTemplateTests(unittest.TestCase):
         self.assertNotIn("{{", skill.read_text(encoding="utf-8"))
         self.assertTrue((target / "docs" / "CODEX_TEMPLATE_STATE.json").is_file())
 
-    def test_default_render_includes_coding_rules_log(self) -> None:
-        context = self.write_context()
+    def test_explicit_core_keeps_coding_rules_log_and_skills(self) -> None:
+        context = self.write_context(preset="core")
         target = self.root / "target"
         render_project(context, target, write=True)
         log = target / "docs" / "CODING_RULES_LOG.md"
@@ -130,7 +133,7 @@ class RenderTemplateTests(unittest.TestCase):
         self.assertIn("## Promotion threshold", log.read_text(encoding="utf-8"))
         standards = target / "docs" / "CODING_STANDARDS.md"
         self.assertIn(
-            "selected industry language baseline first while treating",
+            "selected industry language baseline",
             standards.read_text(encoding="utf-8"),
         )
         self.assertFalse((target / "docs" / "ARCHITECTURE.md").exists())
@@ -167,7 +170,7 @@ class RenderTemplateTests(unittest.TestCase):
 
     def test_unknown_preset_is_rejected(self) -> None:
         context = self.write_context(preset="everything")
-        with self.assertRaisesRegex(RenderError, "must be 'core' or 'full'"):
+        with self.assertRaisesRegex(RenderError, "must be 'minimal', 'core' or 'full'"):
             render_project(context, self.root / "target", write=False)
 
     def test_missing_placeholder_is_rejected(self) -> None:
@@ -220,7 +223,7 @@ class RenderTemplateTests(unittest.TestCase):
             json.dumps(
                 {
                     "values": {},
-                    "include": ["docs/CODEX_WORKFLOW.md"],
+                    "include": ["docs/ADR_TEMPLATE.md"],
                 }
             ),
             encoding="utf-8",
@@ -248,7 +251,7 @@ class RenderTemplateTests(unittest.TestCase):
         )
 
     def test_repeated_identical_write_is_stable(self) -> None:
-        context = self.write_context(include=["docs/CODEX_WORKFLOW.md"])
+        context = self.write_context(include=["docs/ADR_TEMPLATE.md"])
         target = self.root / "target"
         first = render_project(context, target, write=True)
         second = render_project(context, target, write=True)
@@ -256,7 +259,7 @@ class RenderTemplateTests(unittest.TestCase):
         self.assertEqual([status for status, _ in second], ["unchanged", "unchanged"])
 
     def test_include_order_does_not_change_generated_state(self) -> None:
-        sources = ["AGENTS.md.template", "docs/CODEX_WORKFLOW.md"]
+        sources = ["docs/ADR_TEMPLATE.md", "docs/LIBRARY_DOCUMENTATION_TEMPLATE.md"]
         first_context = self.write_context(include=sources, filename="first.json")
         second_context = self.write_context(
             include=list(reversed(sources)), filename="second.json"
@@ -267,10 +270,10 @@ class RenderTemplateTests(unittest.TestCase):
         self.assertTrue(all(status == "unchanged" for status, _ in second))
 
     def test_write_failure_removes_created_file(self) -> None:
-        context = self.write_context(include=["docs/CODEX_WORKFLOW.md"])
+        context = self.write_context(include=["docs/ADR_TEMPLATE.md"])
         target = self.root / "target"
-        with mock.patch("render_template.os.fdopen", side_effect=OSError("write failed")):
-            with self.assertRaisesRegex(OSError, "write failed"):
+        with mock.patch("safe_paths.os.fdopen", side_effect=OSError("write failed")):
+            with self.assertRaisesRegex(RenderError, "write failed"):
                 render_project(context, target, write=True)
         self.assertFalse((target / "docs" / "CODEX_WORKFLOW.md").exists())
         self.assertFalse(target.exists())
@@ -301,6 +304,89 @@ class RenderTemplateTests(unittest.TestCase):
         with self.assertRaisesRegex(RenderError, "target root.*symbolic link"):
             render_project(context, target, write=True)
         self.assertEqual(list(outside.iterdir()), [])
+
+    def test_invalid_actual_schema_rejected_by_cli_without_output(self):
+        context = self.write_context(preset="core", extras={"PROJECT_MAP_JSON": {"unexpected": True}})
+        target = self.root / "target"
+        for mode in ("--dry-run", "--write"):
+            result = subprocess.run(
+                [sys.executable, "-B", str(SCRIPTS / "render_template.py"),
+                 "--context", str(context), "--target", str(target), mode],
+                capture_output=True, text=True,
+            )
+            self.assertEqual(result.returncode, 2, result.stderr)
+            self.assertIn("invalid routing schema", result.stderr)
+            self.assertFalse(target.exists())
+
+    def test_focused_render_requires_references_or_existing_files(self):
+        context = self.write_context(include=["AGENTS.md.template"])
+        target = self.root / "target"
+        with self.assertRaisesRegex(RenderError, "missing referenced target"):
+            render_project(context, target, write=True)
+        self.assertFalse(target.exists())
+        # Install a valid baseline, then inspect a focused unchanged file. Its
+        # manifest differs, so validate the actual references independently.
+        full = self.write_context(filename="full.json")
+        render_project(full, target, write=True)
+        from render_validation import validate_rendered
+        from render_template import build_rendered_files, load_context
+        values, include = load_context(context)
+        validate_rendered(build_rendered_files(source_root(), values, include), source_root(), target)
+
+    def test_ancestor_swapped_after_classification_cannot_escape(self):
+        target = self.root.resolve() / "target"
+        outside = self.root.resolve() / "outside"
+        (target / ".agents/skills/example").mkdir(parents=True)
+        (outside / "skills/example").mkdir(parents=True)
+        item = RenderedFile("example", PurePosixPath(".agents/skills/example/SKILL.md"), b"safe")
+        classified = classify_files(target, [item])
+        (target / ".agents").rename(target / "original")
+        (target / ".agents").symlink_to(outside, target_is_directory=True)
+        with self.assertRaisesRegex(RenderError, "safe write"):
+            write_new_files(target, classified)
+        self.assertFalse((outside / "skills/example/SKILL.md").exists())
+
+    def test_focused_script_requires_auditor_dependency(self):
+        context = self.write_context(include=[
+            "skills/build-and-test/scripts/select_checks.py"
+        ])
+        target = self.root / "target"
+        with self.assertRaisesRegex(RenderError, "missing script dependency"):
+            render_project(context, target, write=True)
+        self.assertFalse(target.exists())
+
+    def test_rollback_preserves_replaced_file_and_reports_incomplete(self):
+        import safe_paths
+        target = self.root.resolve() / "target"
+        target.mkdir()
+        real_fdopen = os.fdopen
+
+        def replace_then_fail(descriptor, mode):
+            with real_fdopen(descriptor, mode) as handle:
+                handle.write(b"original")
+            (target / "a.txt").rename(target / "moved.txt")
+            (target / "a.txt").write_bytes(b"replacement")
+            raise OSError("injected failure")
+
+        with mock.patch.object(safe_paths.os, "fdopen", side_effect=replace_then_fail):
+            with self.assertRaisesRegex(RenderError, "incomplete rollback.*replaced object"):
+                write_new_files(target, [("create", RenderedFile(
+                    "first", PurePosixPath("a.txt"), b"new"
+                ))])
+        self.assertEqual((target / "a.txt").read_bytes(), b"replacement")
+        self.assertEqual((target / "moved.txt").read_bytes(), b"original")
+
+    def test_late_conflict_rolls_back_only_created_files(self):
+        target = self.root.resolve() / "target"
+        target.mkdir()
+        first = RenderedFile("first", PurePosixPath("a.txt"), b"new")
+        last = RenderedFile("last", PurePosixPath("z.txt"), b"new")
+        classified = classify_files(target, [first, last])
+        (target / "z.txt").write_bytes(b"user")
+        with self.assertRaises(RenderError):
+            write_new_files(target, classified)
+        self.assertFalse((target / "a.txt").exists())
+        self.assertEqual((target / "z.txt").read_bytes(), b"user")
 
 
 if __name__ == "__main__":

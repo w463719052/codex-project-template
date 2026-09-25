@@ -11,7 +11,10 @@
       "base_revision": "example-revision",
       "model_configuration": "same-example-model-and-reasoning",
       "environment": "same-example-environment",
-      "acceptance_checks": ["example-test", "example-review"],
+      "acceptance_checks": [
+        "example-test",
+        "example-review"
+      ],
       "metrics": {
         "first_pass_success": false,
         "user_round_trips": 2,
@@ -20,7 +23,18 @@
         "output_tokens": null,
         "total_tokens": null,
         "scope_escapes": 1,
-        "review_defects": 1
+        "review_defects": 1,
+        "setup_seconds": null,
+        "maintenance_seconds": null
+      },
+      "workflow": {
+        "name": "baseline",
+        "version": "synthetic-example"
+      },
+      "repeat_id": "example-1",
+      "measurement": {
+        "method": "synthetic-fixture",
+        "source": "example-only; no model session was run"
       }
     },
     {
@@ -30,7 +44,10 @@
       "base_revision": "example-revision",
       "model_configuration": "same-example-model-and-reasoning",
       "environment": "same-example-environment",
-      "acceptance_checks": ["example-test", "example-review"],
+      "acceptance_checks": [
+        "example-test",
+        "example-review"
+      ],
       "metrics": {
         "first_pass_success": true,
         "user_round_trips": 1,
@@ -39,7 +56,18 @@
         "output_tokens": null,
         "total_tokens": null,
         "scope_escapes": 0,
-        "review_defects": 0
+        "review_defects": 0,
+        "setup_seconds": null,
+        "maintenance_seconds": null
+      },
+      "workflow": {
+        "name": "minimal",
+        "version": "synthetic-example"
+      },
+      "repeat_id": "example-1",
+      "measurement": {
+        "method": "synthetic-fixture",
+        "source": "example-only; no model session was run"
       }
     }
   ]

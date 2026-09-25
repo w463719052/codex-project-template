@@ -4,6 +4,51 @@ All notable changes to the formally versioned project template are recorded
 here. Template versioning follows semantic versioning for generated-contract
 compatibility; repository commits remain the detailed source history.
 
+## 3.0.1 - 2026-09-25
+
+- Filter initialization content for concise entrypoints, actionable scoped rules,
+  and evidenced command applicability without new configuration fields.
+- Reuse available guidance and authorization within a task; reread relevant
+  sections on changes, new boundaries, conflicts, or lost context.
+- Guard fixed-sample default guidance size in repository validation without
+  truncating real target requirements or claiming measured token savings.
+- Clarify that subsequent rule updates require evidence and authorization,
+  not background learning or automatic synchronization from target projects.
+
+## 3.0.0 - 2026-09-25
+
+- Change omitted preset to minimal; minimal now emits four guidance files plus
+  the automatic state manifest. Explicit core/full keep their file sets.
+- Remove routing JSON, repository skills, fingerprints, worksheets, and logs
+  from default initialization. Existing targets are never automatically pruned.
+- Shorten shared guidance while preserving stable rule IDs, authorization,
+  language baselines, worktree protection, and truthful verification.
+- Collect only selected output's required fields; retain known unused context
+  values for compatibility. Existing callers needing the old default must set core.
+- Keep routing, evidence audits, upgrade reports, and evaluation as optional
+  extensions or maintenance tools, without a mandatory daily skill chain.
+- Static output reductions are not measured model-token or quality gains.
+
+## 2.1.0 - 2026-09-25
+
+- Validate actual rendered routing schemas and referenced dependencies before
+  writes; focused includes may use verified existing target references.
+- Use POSIX directory-relative no-follow writes with exclusive creation and
+  identity-checked rollback. Report incomplete rollback instead of hiding it.
+- Add opt-in minimal output; retain core as the default and full for explicitly
+  selected complete guidance. Task records are opt-in; task templates are input.
+- Make explicit file/module hints outrank generic task routes, prioritize
+  authority/contracts/tests, and report broad scope and omitted candidates.
+- Add optional provenance fingerprints and a read-only evidence auditor;
+  preserve legacy schema inputs. Add scoped language selection and explicit roles.
+- Extend paired study records with workflow identity, repetition, measurement
+  provenance, optional setup/maintenance costs, and per-metric sample counts.
+- Add a read-only drift/candidate upgrade report without automatic merges.
+- Add Ubuntu/macOS and Python 3.12/3.14 CI coverage configuration. Remote CI and
+  real-model evaluation require separate observed results; neither is implied.
+- Keep defaults project-neutral: no business commands, device identifiers,
+  individual preferences, or project-specific skills are bundled.
+
 ## 2.0.0 - 2026-08-26
 
 - Replace the universal pre-edit approval round trip with conservative L1-L4

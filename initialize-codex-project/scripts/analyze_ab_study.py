@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
@@ -23,6 +24,10 @@ METRIC_FIELDS = (
     "scope_escapes",
     "review_defects",
 )
+OPTIONAL_METRIC_FIELDS = ("setup_seconds", "maintenance_seconds")
+ALL_METRIC_FIELDS = METRIC_FIELDS + OPTIONAL_METRIC_FIELDS
+OPTIONAL_RUN_FIELDS = {"workflow", "repeat_id", "measurement"}
+
 NONNEGATIVE_INTEGER_FIELDS = {
     "user_round_trips",
     "input_tokens",
@@ -57,13 +62,13 @@ def require_string(value: Any, label: str) -> str:
 
 
 def validate_metric(value: Any, name: str, label: str) -> Optional[float]:
-    if value is None and name in {"input_tokens", "output_tokens", "total_tokens"}:
+    if value is None and name in {"input_tokens", "output_tokens", "total_tokens", *OPTIONAL_METRIC_FIELDS}:
         return None
-    if isinstance(value, bool) or not isinstance(value, (int, float)) or value < 0:
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or value < 0 or (isinstance(value, float) and not math.isfinite(value)):
         raise StudyError(f"{label}.{name} must be a non-negative number or allowed null")
     if name in NONNEGATIVE_INTEGER_FIELDS and not isinstance(value, int):
         raise StudyError(f"{label}.{name} must be an integer or allowed null")
-    return float(value)
+    return value
 
 
 def validate_run(raw: Any, index: int) -> Dict[str, Any]:
@@ -80,7 +85,7 @@ def validate_run(raw: Any, index: int) -> Dict[str, Any]:
         "acceptance_checks",
         "metrics",
     }
-    if set(raw) != required:
+    if set(raw) - OPTIONAL_RUN_FIELDS != required:
         raise StudyError(
             f"{label} has missing or unknown fields: expected {sorted(required)}"
         )
@@ -98,7 +103,7 @@ def validate_run(raw: Any, index: int) -> Dict[str, Any]:
         raise StudyError(f"{label}.acceptance_checks must be a non-empty string array")
     result["acceptance_checks"] = checks
     metrics = raw["metrics"]
-    if not isinstance(metrics, dict) or set(metrics) != {
+    if not isinstance(metrics, dict) or set(metrics) - set(OPTIONAL_METRIC_FIELDS) != {
         "first_pass_success", *METRIC_FIELDS
     }:
         raise StudyError(f"{label}.metrics has missing or unknown fields")
@@ -107,8 +112,8 @@ def validate_run(raw: Any, index: int) -> Dict[str, Any]:
     normalized_metrics: Dict[str, Any] = {
         "first_pass_success": metrics["first_pass_success"]
     }
-    for name in METRIC_FIELDS:
-        normalized_metrics[name] = validate_metric(metrics[name], name, label)
+    for name in ALL_METRIC_FIELDS:
+        normalized_metrics[name] = validate_metric(metrics.get(name), name, label)
     token_values = [normalized_metrics[name] for name in (
         "input_tokens", "output_tokens", "total_tokens"
     )]
@@ -116,6 +121,18 @@ def validate_run(raw: Any, index: int) -> Dict[str, Any]:
         if token_values[0] + token_values[1] != token_values[2]:
             raise StudyError(f"{label} token total must equal input plus output")
     result["metrics"] = normalized_metrics
+    if "workflow" in raw:
+        workflow = raw["workflow"]
+        if not isinstance(workflow, dict) or set(workflow) != {"name", "version"}:
+            raise StudyError(f"{label}.workflow requires name and version")
+        result["workflow"] = {key: require_string(value, f"{label}.workflow.{key}") for key, value in workflow.items()}
+    if "repeat_id" in raw:
+        result["repeat_id"] = require_string(raw["repeat_id"], f"{label}.repeat_id")
+    if "measurement" in raw:
+        measurement = raw["measurement"]
+        if not isinstance(measurement, dict) or set(measurement) != {"method", "source"}:
+            raise StudyError(f"{label}.measurement requires method and source")
+        result["measurement"] = {key: require_string(value, f"{label}.measurement.{key}") for key, value in measurement.items()}
     return result
 
 
@@ -131,8 +148,12 @@ def summarize_arm(runs: Sequence[Mapping[str, Any]]) -> Dict[str, Any]:
             [1.0 if run["metrics"]["first_pass_success"] else 0.0 for run in runs]
         ),
     }
-    for name in METRIC_FIELDS:
+    for name in ALL_METRIC_FIELDS:
         summary[f"mean_{name}"] = mean([run["metrics"][name] for run in runs])
+    summary["available_metric_samples"] = {
+        name: sum(run["metrics"][name] is not None for run in runs)
+        for name in ALL_METRIC_FIELDS
+    }
     return summary
 
 
@@ -152,6 +173,21 @@ def analyze_study(raw: Any) -> Dict[str, Any]:
         raise StudyError("runs must be a non-empty array")
     runs = [validate_run(item, index) for index, item in enumerate(raw["runs"])]
 
+    # Each study compares one stable workflow pair. Use separate study files
+    # for baseline/minimal and baseline/core rather than pooling different arms.
+    for arm in ("A", "B"):
+        workflows = {json.dumps(run.get("workflow"), sort_keys=True) for run in runs if run["arm"] == arm}
+        if len(workflows) > 1:
+            raise StudyError(f"arm {arm} mixes workflow identities; use separate studies")
+    repeats = set()
+    for run in runs:
+        if "repeat_id" not in run:
+            continue
+        key = tuple(run[field] for field in ("task_id", "base_revision", "model_configuration", "environment", "repeat_id", "arm"))
+        if key in repeats:
+            raise StudyError("duplicate task repetition; do not count one run twice")
+        repeats.add(key)
+
     by_pair: Dict[str, Dict[str, Dict[str, Any]]] = {}
     for run in runs:
         arms = by_pair.setdefault(run["pair_id"], {})
@@ -167,6 +203,10 @@ def analyze_study(raw: Any) -> Dict[str, Any]:
             incomplete.append(pair_id)
             continue
         mismatches = [field for field in PAIRING_FIELDS if arms["A"][field] != arms["B"][field]]
+        if arms["A"].get("repeat_id") != arms["B"].get("repeat_id"):
+            mismatches.append("repeat_id")
+        if arms["A"].get("measurement", {}).get("method") != arms["B"].get("measurement", {}).get("method"):
+            mismatches.append("measurement.method")
         if mismatches:
             confounded[pair_id] = mismatches
             continue
@@ -181,7 +221,7 @@ def analyze_study(raw: Any) -> Dict[str, Any]:
         a_success = summarize_arm(arm_a)["first_pass_success_rate"]
         b_success = summarize_arm(arm_b)["first_pass_success_rate"]
         deltas["first_pass_success_rate"] = b_success - a_success
-    for name in METRIC_FIELDS:
+    for name in ALL_METRIC_FIELDS:
         pair_deltas = []
         for a_run, b_run in complete:
             a_value = a_run["metrics"][name]
@@ -189,10 +229,16 @@ def analyze_study(raw: Any) -> Dict[str, Any]:
             pair_deltas.append(None if a_value is None or b_value is None else b_value - a_value)
         deltas[name] = mean(pair_deltas)
 
+    paired_samples = {
+        name: sum(a["metrics"][name] is not None and b["metrics"][name] is not None for a, b in complete)
+        for name in ALL_METRIC_FIELDS
+    }
     notes = []
     notes.append(
         "Reported deltas are descriptive; interpret them with sample size and study controls."
     )
+    if any("measurement" not in run or "workflow" not in run or "repeat_id" not in run for run in runs):
+        notes.append("Legacy records lack workflow, repetition, or measurement provenance; inspect these limits before interpreting results.")
     if evidence_kind == "example":
         notes.append("Example data validates the analyzer and is not performance evidence.")
     if incomplete:
@@ -212,6 +258,7 @@ def analyze_study(raw: Any) -> Dict[str, Any]:
         "confounded_pairs": confounded,
         "arms": {"A": summarize_arm(arm_a), "B": summarize_arm(arm_b)},
         "paired_delta_b_minus_a": deltas,
+        "paired_metric_samples": paired_samples,
         "notes": notes,
     }
 
@@ -229,7 +276,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     except StudyError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
-    print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
+    print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True, allow_nan=False))
     return 0
 
 

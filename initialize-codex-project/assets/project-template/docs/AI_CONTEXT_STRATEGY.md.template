@@ -4,6 +4,10 @@ Load the smallest evidence set that can safely answer the task, then expand only
 when a named trigger is met. Token reduction never overrides correctness,
 compatibility, security, privacy, or the approved scope.
 
+This document belongs to the optional routing extension. Minimal projects use
+bounded path/caller searches without maintaining these files. Read this document
+only when using or changing the installed routing metadata.
+
 ## Machine-readable routing sources
 
 - `.agents/ai/project-map.json`: modules, entrypoints, contracts, consumers,
@@ -25,6 +29,26 @@ compatibility, security, privacy, or the approved scope.
   paths unless the approved task and authority rules require them.
 - The context-pack tool returns paths, reasons, and byte counts; it does not emit
   source content.
+
+## Evidence freshness and focused selection
+
+With explicit file/module hints, select only their module routes; a generic task
+word must not expand that scope. Module authority, contracts, and tests precede
+broad route examples. Inspect `omitted`, `scope_required`, and `candidate_routes`:
+a broad multi-module result requires narrowing or an evidenced expansion.
+
+Modules may include optional `provenance` entries. Each entry requires a
+repository-relative `path`; optional fields are `sha256` (64 lowercase hex),
+`verified_at` (YYYY-MM-DD), `scope`, `environment`, and string-array
+`prerequisites`. Capture these only from actual inspection. Missing fingerprints
+remain unverified; never manufacture dates, hashes, or command success.
+
+For a requested freshness audit, run the bundled `audit_evidence.py` with `--project-root` and optionally repeated
+`--metadata` relative paths. It reads map/routes sources without running commands
+or changing metadata. Results are current, stale, missing, or unverified. Current
+means source bytes match, not that commands passed or prerequisites remain valid.
+Exit codes: 0 for current/unverified sources, 1 for stale/missing sources, 2 for
+invalid input or inaccessible evidence. Review unverified entries explicitly.
 
 ## Exclusions
 

@@ -19,7 +19,7 @@ content, credentials, personal data, or unrelated behavior metadata.
 
 ## Candidate record
 
-For each candidate, record:
+After explicit confirmation, record each candidate:
 
 | Field | Required content |
 | --- | --- |
@@ -42,7 +42,8 @@ No recurring correction has been verified yet.
 
 ## Promotion workflow
 
-1. Confirm at least three occurrences and the root cause; do not promote one-off taste.
+1. Confirm the recurrence threshold and root cause; operator choices require
+   at least three explicit occurrences. Do not promote one-off taste.
 2. Compare the candidate with the selected language authority and verified project rules.
 3. Present the evidence, suggested rule, benefit, risk, and exact synchronization files.
 4. Wait for explicit confirmation before recording the candidate or changing a rule.

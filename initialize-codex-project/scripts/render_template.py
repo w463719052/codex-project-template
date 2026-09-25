@@ -6,12 +6,14 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Set, Tuple
+
+from render_validation import ValidationError, validate_rendered
+from safe_paths import SafePathError, write_exclusive
 
 
 PLACEHOLDER_PATTERN = re.compile(r"\{\{([A-Z][A-Z0-9_]*)\}\}")
@@ -33,6 +35,15 @@ CORE_SOURCES = (
     "skills/code-review/SKILL.md.template",
     "skills/context-discovery/SKILL.md.template",
     "skills/context-discovery/scripts/build_context_pack.py",
+    "skills/context-discovery/scripts/audit_evidence.py",
+)
+
+
+MINIMAL_SOURCES = (
+    "AGENTS.md.template",
+    "docs/CODEX_WORKFLOW.md",
+    "docs/CODING_STANDARDS.md.template",
+    "docs/VERIFICATION.md.template",
 )
 
 
@@ -153,9 +164,9 @@ def load_context(path: Path) -> Tuple[Dict[str, Any], Optional[List[str]]]:
                 raise RenderError(f"context value for {key} must not be blank")
         values[key] = value
     include_raw = raw.get("include")
-    preset_raw = raw.get("preset", "core")
-    if not isinstance(preset_raw, str) or preset_raw not in {"core", "full"}:
-        raise RenderError("context.preset must be 'core' or 'full'")
+    preset_raw = raw.get("preset", "minimal")
+    if not isinstance(preset_raw, str) or preset_raw not in {"minimal", "core", "full"}:
+        raise RenderError("context.preset must be 'minimal', 'core' or 'full'")
     if include_raw is not None and "preset" in raw:
         raise RenderError("context.include and context.preset are mutually exclusive")
     include: Optional[List[str]] = None
@@ -167,6 +178,8 @@ def load_context(path: Path) -> Tuple[Dict[str, Any], Optional[List[str]]]:
         include = [normalize_source_name(item) for item in include_raw]
         if len(include) != len(set(include)):
             raise RenderError("context.include contains duplicate paths")
+    elif preset_raw == "minimal":
+        include = list(MINIMAL_SOURCES)
     elif preset_raw == "core":
         include = list(CORE_SOURCES)
     return values, include
@@ -321,54 +334,13 @@ def write_new_files(
             "refusing to overwrite non-identical targets: " + ", ".join(conflicts)
         )
 
-    created_files: List[Path] = []
-    created_directories: List[Path] = []
-
-    def ensure_directory(path: Path) -> None:
-        if path.is_symlink():
-            raise RenderError(f"refusing directory symbolic link: {path}")
-        if path.exists():
-            if not path.is_dir():
-                raise RenderError(f"required directory path is not a directory: {path}")
-            return
-        ensure_directory(path.parent)
-        try:
-            path.mkdir()
-            created_directories.append(path)
-        except FileExistsError:
-            if path.is_symlink() or not path.is_dir():
-                raise RenderError(f"unsafe directory appeared during write: {path}")
-
     try:
-        ensure_directory(target_root)
-        for status, item in classifications:
-            if status != "create":
-                continue
-            target = target_root.joinpath(*item.target.parts)
-            ensure_directory(target.parent)
-            descriptor = os.open(target, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o644)
-            created_files.append(target)
-            try:
-                with os.fdopen(descriptor, "wb") as handle:
-                    handle.write(item.content)
-            except BaseException:
-                try:
-                    os.close(descriptor)
-                except OSError:
-                    pass
-                raise
-    except BaseException:
-        for path in reversed(created_files):
-            try:
-                path.unlink()
-            except OSError:
-                pass
-        for path in reversed(created_directories):
-            try:
-                path.rmdir()
-            except OSError:
-                pass
-        raise
+        write_exclusive(target_root, (
+            (item.target.as_posix(), item.content)
+            for status, item in classifications if status == "create"
+        ))
+    except SafePathError as exc:
+        raise RenderError(str(exc)) from exc
 
 
 def render_project(
@@ -377,6 +349,12 @@ def render_project(
     write: bool,
     root: Optional[Path] = None,
 ) -> List[Tuple[str, RenderedFile]]:
+    if target_root.is_symlink():
+        raise RenderError(f"target root must not be a symbolic link: {target_root}")
+    # Resolve trusted parent aliases once, before discovery. Never resolve a
+    # rendered path or re-resolve the root after classification.
+    target_root = target_root.absolute()
+    target_root = target_root.parent.resolve() / target_root.name
     actual_root = root if root is not None else source_root()
     values, include = load_context(context_path)
     rendered = build_rendered_files(actual_root, values, include)
@@ -391,6 +369,10 @@ def render_project(
         raise RenderError(
             "refusing to overwrite non-identical targets: " + ", ".join(conflicts)
         )
+    try:
+        validate_rendered(files, actual_root, target_root)
+    except ValidationError as exc:
+        raise RenderError(str(exc)) from exc
     if write:
         write_new_files(target_root, classifications)
     return classifications
@@ -416,7 +398,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             target_root=args.target.absolute(),
             write=args.write,
         )
-    except RenderError as exc:
+    except (RenderError, OSError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     mode = "write" if args.write else "dry-run"

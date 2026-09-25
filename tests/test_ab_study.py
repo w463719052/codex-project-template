@@ -74,6 +74,52 @@ class AbStudyTests(unittest.TestCase):
         with self.assertRaisesRegex(MODULE.StudyError, "token total"):
             MODULE.analyze_study(study)
 
+    def test_optional_telemetry_counts_only_observed_pairs(self):
+        study = self.study()
+        for run in study["runs"]:
+            run["workflow"] = {"name": "baseline" if run["arm"] == "A" else "minimal", "version": "test"}
+            run["repeat_id"] = "repeat-1"
+            run["measurement"] = {"method": "session-log", "source": run["arm"] + ".json"}
+        study["runs"][0]["metrics"].update(setup_seconds=3, maintenance_seconds=5)
+        study["runs"][1]["metrics"].update(setup_seconds=4, maintenance_seconds=None)
+        result = MODULE.analyze_study(study)
+        self.assertEqual(result["paired_delta_b_minus_a"]["setup_seconds"], 1)
+        self.assertEqual(result["paired_metric_samples"]["setup_seconds"], 1)
+        self.assertEqual(result["paired_metric_samples"]["maintenance_seconds"], 0)
+        self.assertIsNone(result["paired_delta_b_minus_a"]["maintenance_seconds"])
+
+    def test_measurement_mismatch_excludes_pair(self):
+        study = self.study()
+        for run in study["runs"]:
+            run["measurement"] = {"method": run["arm"], "source": "test"}
+        result = MODULE.analyze_study(study)
+        self.assertEqual(result["confounded_pairs"]["pair-1"], ["measurement.method"])
+
+    def test_nonfinite_metrics_are_rejected(self):
+        for invalid in (float("inf"), float("nan")):
+            study = self.study()
+            study["runs"][0]["metrics"]["elapsed_seconds"] = invalid
+            with self.assertRaises(MODULE.StudyError):
+                MODULE.analyze_study(study)
+
+    def test_different_workflows_cannot_be_pooled(self):
+        study = self.study()
+        duplicate = copy.deepcopy(study["runs"][0])
+        duplicate["pair_id"] = "pair-2"
+        duplicate["workflow"] = {"name": "other", "version": "test"}
+        study["runs"].append(duplicate)
+        with self.assertRaisesRegex(MODULE.StudyError, "mixes workflow"):
+            MODULE.analyze_study(study)
+
+    def test_duplicate_repetition_is_rejected(self):
+        study = self.study()
+        study["runs"][0]["repeat_id"] = "one"
+        duplicate = copy.deepcopy(study["runs"][0])
+        duplicate["pair_id"] = "different-pair"
+        study["runs"].append(duplicate)
+        with self.assertRaisesRegex(MODULE.StudyError, "duplicate task repetition"):
+            MODULE.analyze_study(study)
+
 
 if __name__ == "__main__":
     unittest.main()

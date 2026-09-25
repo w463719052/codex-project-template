@@ -38,6 +38,14 @@ Example or synthetic records validate the analyzer but are not performance
 evidence. Report sample size, incomplete pairs, configuration mismatches, and
 metric deltas; do not claim causality from unpaired or confounded runs.
 
+Keep baseline/minimal and baseline/core as separate paired studies. Record
+workflow name/version, repeat ID, measurement method and source when available.
+Track measured setup and maintenance costs separately; do not silently count
+missing costs as zero or repeat a one-time cost for every run. Report per-metric
+sample counts and randomize or counterbalance run order. Legacy records remain
+readable but missing provenance limits interpretation. No real telemetry means
+real-model evaluation is not-run.
+
 ## Quality guardrails
 
 {{QUALITY_GUARDRAILS}}
@@ -48,13 +56,7 @@ review defect detection.
 
 ## Task and reasoning classes
 
-- L1: declared local, public-contract-preserving change with known verification;
-  a direct implementation request authorizes execution.
-- L2: module-local behavior or debugging inside once-approved directories.
-- L3: cross-module, compatibility, concurrency, or data-flow change with an
-  exact approved plan.
-- L4: architecture, security/privacy, migration, destructive/external, or
-  high-cost failure work with complete impact and rollback evidence.
+Use the task classes and authorization defined in `docs/CODEX_WORKFLOW.md`.
 
 The operator selects the model and reasoning level. Repository guidance records
 task complexity and evidence; it does not pin a changing product/model name.

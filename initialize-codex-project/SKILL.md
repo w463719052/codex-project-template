@@ -51,6 +51,11 @@ Aim for at most 60 rendered lines; remove duplication and reference existing
 project documents before expanding it. Do not create another document just to
 move text out, or discard necessary constraints/gaps to meet a length target.
 
+Preserve the template's core engineering rules: readable code, useful maintained
+comments, thorough task reasoning with proportionate implementation, and best-fit
+technology within verified compatibility requirements. Keep their full wording
+in coding standards; do not duplicate it across generated documents.
+
 For coding guidance, cite enforcement configuration instead of copying its rules.
 Summarize applicable industry baselines; retain project-specific compatibility
 limits and evidenced recurring mistakes. Each retained rule should identify its

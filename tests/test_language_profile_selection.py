@@ -151,6 +151,29 @@ class LanguageProfileSelectionTests(unittest.TestCase):
         result = self.result()
         self.assertNotIn("typescript-javascript", self.ids(result["selected_profiles"]))
 
+    def test_swift_build_artifacts_do_not_change_language_evidence(self) -> None:
+        self.write("ios/Package.swift")
+        self.write("ios/Sources/App.swift")
+        self.write("ios/App.xcodeproj/project.pbxproj")
+        before = select_profiles(self.catalog, self.root, scopes=["ios"])
+        self.write("ios/.build/out/Intermediates.noindex/GeneratedModuleMaps/App-Swift.h")
+        self.write("ios/.build/out/DerivedSources/test_entry_point.swift")
+        for scopes in ((), ("ios",)):
+            with self.subTest(scopes=scopes):
+                after = select_profiles(self.catalog, self.root, scopes=scopes, max_files=3)
+                self.assertEqual(after["selected_profiles"], before["selected_profiles"])
+                self.assertEqual(after["ambiguous_profiles"], [])
+                self.assertEqual(after["scanned_files"], before["scanned_files"])
+                self.assertFalse(after["truncated"])
+
+    def test_explicit_swift_build_scope_remains_inspectable(self) -> None:
+        self.write("ios/.build/DerivedSources/generated.c")
+        for scope in ("ios/.build", "ios/.build/DerivedSources/generated.c"):
+            with self.subTest(scope=scope):
+                result = select_profiles(self.catalog, self.root, scopes=[scope])
+                self.assertEqual(self.ids(result["selected_profiles"]), ["c"])
+                self.assertEqual(result["scanned_files"], 1)
+
     def test_scan_budget_reports_truncation(self) -> None:
         self.write("a.py")
         self.write("b.py")

@@ -4,6 +4,19 @@ All notable changes to the formally versioned project template are recorded
 here. Template versioning follows semantic versioning for generated-contract
 compatibility; repository commits remain the detailed source history.
 
+## Unreleased
+
+- Exclude Finder `.DS_Store` metadata from template discovery at every depth;
+  preserve hidden templates and errors for other invalid UTF-8 sources.
+
+- Add core coding guidance for readability, useful maintained comments,
+  proportionate design, and technology choices constrained by verified
+  compatibility, without new files, dependencies, or workflow gates.
+
+- Ignore Swift `.build` directories during automatic language discovery so
+  generated compatibility headers do not select Objective-C/C/C++ profiles or
+  consume source-scan budgets. Explicit file/directory scopes remain inspectable.
+
 ## 3.0.1 - 2026-09-25
 
 - Filter initialization content for concise entrypoints, actionable scoped rules,

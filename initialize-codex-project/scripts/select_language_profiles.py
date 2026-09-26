@@ -15,6 +15,7 @@ from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Set, 
 DEFAULT_MAX_FILES = 200_000
 EVIDENCE_SAMPLE_LIMIT = 10
 EXCLUDED_DIRECTORY_NAMES = {
+    ".build",
     ".git",
     ".hg",
     ".svn",

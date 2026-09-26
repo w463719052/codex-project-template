@@ -89,7 +89,7 @@ def discover_sources(root: Path) -> Dict[str, Path]:
         raise RenderError(f"template source directory does not exist: {root}")
     sources: Dict[str, Path] = {}
     for path in sorted(root.rglob("*")):
-        if path.is_file():
+        if path.name != ".DS_Store" and path.is_file():
             name = path.relative_to(root).as_posix()
             sources[name] = path
     if not sources:

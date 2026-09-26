@@ -20,6 +20,7 @@ from render_template import (  # noqa: E402
     classify_files,
     write_new_files,
     all_placeholder_names,
+    build_rendered_files,
     render_project,
     source_root,
 )
@@ -32,6 +33,26 @@ class RenderTemplateTests(unittest.TestCase):
 
     def tearDown(self) -> None:
         self.temporary.cleanup()
+
+    def test_finder_metadata_is_ignored_but_hidden_templates_are_rendered(self) -> None:
+        templates = self.root / "templates"
+        (templates / "docs").mkdir(parents=True)
+        for name in (".DS_Store", "docs/.DS_Store"):
+            (templates / name).write_bytes(b"\x00\xff{{IGNORED}}")
+        (templates / ".editorconfig.template").write_text("root = true\n")
+        (templates / "docs/note.template").write_text("{{PROJECT_NAME}}\n")
+
+        self.assertEqual(all_placeholder_names(templates), {"PROJECT_NAME"})
+        files = build_rendered_files(templates, {"PROJECT_NAME": "Demo"})
+        self.assertEqual(
+            {item.target.as_posix(): item.content for item in files},
+            {".editorconfig": b"root = true\n", "docs/note": b"Demo\n"},
+        )
+
+    def test_other_non_utf8_templates_still_report_an_error(self) -> None:
+        (self.root / "broken.template").write_bytes(b"\xff")
+        with self.assertRaisesRegex(RenderError, "cannot read UTF-8 template"):
+            all_placeholder_names(self.root)
 
     def write_context(
         self, include=None, preset=None, omit=None, extras=None, filename="context.json"

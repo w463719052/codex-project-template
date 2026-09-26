@@ -1,10 +1,17 @@
 # {{PROJECT_NAME}} Coding Standards
 
-For new and materially changed code, use the selected industry language baseline
-first. Verified build/CI, compatibility, public contracts, security/privacy, and
-platform requirements are hard constraints. Existing conventions supply
-compatibility evidence. Report conflicts; do not bypass enforcement or expand
-into unapproved configuration migration or repository-wide reformatting.
+For new/materially changed code, prefer the selected industry language baseline within
+verified build/CI, compatibility, public-contract, security/privacy, and platform
+constraints. Existing conventions provide compatibility evidence. Report conflicts;
+never bypass enforcement or start unapproved migration or repository-wide reformatting.
+
+## Core rules
+
+- Favor readable, cohesive code with low coupling over clever brevity or layers.
+- Maintain clear comments for intent, contracts, and pitfalls; avoid obvious narration.
+- Consider callers, failures, and verification; build for current needs, not speculation.
+- Choose the best fit for requirements and maintenance cost, within required compatibility;
+  explain material tradeoffs. Novelty or habit alone is not justification.
 
 ## Selected profiles and enforcement
 
@@ -12,8 +19,8 @@ into unapproved configuration migration or repository-wide reformatting.
 
 {{ENFORCEMENT_SOURCES}}
 
-Read only the profile for the affected language/module. If no applicable profile
-is selected, report the gap and obtain an approved standards update.
+Read affected language/module profiles only. Missing profiles need a reported gap
+and approved standards update.
 
 ## Project-specific rules
 
@@ -25,12 +32,11 @@ is selected, report the gap and obtain an approved standards update.
 
 {{TEST_AND_DOCUMENTATION_RULES}}
 
-Rules should identify affected scope and the decision they change. Cite existing
-enforcement configuration rather than repeat it; keep applicable baseline
-summaries, compatibility limits, and evidenced mistakes, not generic advice.
-Do not copy entire profiles or silently replace them with legacy conventions.
-Change generated code through its verified source. Shared-library extraction needs evidenced consumers, an
-approved contract, compatibility, tests, and migration.
+State each rule's scope and decision; cite enforcement rather than duplicate it.
+Summarize applicable baselines, compatibility limits, and evidenced mistakes;
+do not copy profiles or substitute legacy habits. Edit generated code at its
+verified source. Shared extraction needs evidenced consumers, an approved contract,
+compatibility, tests, and migration.
 
 ## Conflicts and gaps
 
